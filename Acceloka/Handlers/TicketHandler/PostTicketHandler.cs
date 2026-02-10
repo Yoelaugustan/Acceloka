@@ -32,7 +32,7 @@ namespace Acceloka.Handlers.TicketHandler
                 );
             }
 
-            // Validation
+            // Input Validation
             var validationResult = await _validator.ValidateAsync(request, ct);
 
             if (!validationResult.IsValid)

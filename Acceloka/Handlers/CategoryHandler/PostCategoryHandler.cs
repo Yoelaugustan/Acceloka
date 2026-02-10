@@ -33,6 +33,7 @@ namespace Acceloka.Handlers.CategoryHandler
                 );
             }
 
+            // Input Validation
             var validationResult = await _validator.ValidateAsync(request, ct);
 
             if (!validationResult.IsValid)
