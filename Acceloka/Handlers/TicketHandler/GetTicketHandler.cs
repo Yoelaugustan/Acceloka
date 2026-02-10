@@ -1,21 +1,32 @@
-﻿using Acceloka.Entities;
+﻿using Acceloka.Commands;
+using Acceloka.Entities;
 using Acceloka.Queries;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Acceloka.Handlers.CategoryHandler
 {
     public class GetTicketHandler : IRequestHandler<TicketsQuery, IResult>
     {
         private readonly AccelokaDbContext _db;
+        private readonly IValidator<TicketsQuery> _validator;
 
-        public GetTicketHandler(AccelokaDbContext db)
+        public GetTicketHandler(AccelokaDbContext db, IValidator<TicketsQuery> validator)
         {
             _db = db;
+            _validator = validator;
         }
 
         public async Task<IResult> Handle(TicketsQuery request, CancellationToken ct)
         {
+            var validationResult = await _validator.ValidateAsync(request, ct);
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+
             var query = _db.Tickets.AsQueryable();
 
             // Only show tickets that has quota

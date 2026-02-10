@@ -1,4 +1,4 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.BookedTicket;
 using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ namespace Acceloka.Controllers
         }
         // POST api/<BookedTicketController>
         [HttpPost("book-ticket")]
-        public async Task<IResult> CreateBookedTicket([FromBody] BookedTicketCommand command)
+        public async Task<IResult> CreateBookedTicket([FromBody] PostBookedTicketCommand command)
         {
             var result = await _mediator.Send(command);
             return result;
@@ -39,9 +39,11 @@ namespace Acceloka.Controllers
         }
 
         // DELETE api/<BookedTicketController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("revoke-ticket/{BookedTicketId}/{TicketCode}/{Qty}")]
+        public async Task<IResult> RevokeTicket([FromRoute] int BookedTicketId, [FromRoute] string TicketCode, [FromRoute] int Qty)
         {
+            var result = await _mediator.Send(new DeleteTicketCommand(BookedTicketId, TicketCode, Qty));
+            return result;
         }
     }
 }
