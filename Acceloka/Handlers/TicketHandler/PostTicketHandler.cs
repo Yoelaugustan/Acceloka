@@ -19,6 +19,7 @@ namespace Acceloka.Handlers.TicketHandler
 
         public async Task<IResult> Handle(TicketCommand request, CancellationToken ct)
         {
+            // Check if ticket code already exists
             var exist = await _db.Tickets
                 .AnyAsync(t => t.TicketCode == request.Code, ct);
 
@@ -31,6 +32,7 @@ namespace Acceloka.Handlers.TicketHandler
                 );
             }
 
+            // Validation
             var validationResult = await _validator.ValidateAsync(request, ct);
 
             if (!validationResult.IsValid)
@@ -38,6 +40,7 @@ namespace Acceloka.Handlers.TicketHandler
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
+            // Insert to DB
             var newTicket = new Ticket
             {
                 TicketCode = request.Code,
@@ -51,6 +54,7 @@ namespace Acceloka.Handlers.TicketHandler
             _db.Tickets.Add(newTicket);
             await _db.SaveChangesAsync(ct);
 
+            // Return created ticket
             return Results.Ok(new
             {
                 ticketCode = newTicket.TicketCode,

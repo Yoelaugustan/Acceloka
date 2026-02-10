@@ -1,4 +1,5 @@
 ﻿using Acceloka.Commands;
+using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +19,10 @@ namespace Acceloka.Controllers
 
         // GET: api/<TicketController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IResult> GetTickets([FromQuery] TicketsQuery query)
         {
-            return new string[] { "value1", "value2" };
+            var result = await _mediator.Send(query);
+            return result;
         }
 
         // POST api/<TicketController>
