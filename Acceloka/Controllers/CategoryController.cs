@@ -1,4 +1,5 @@
 ﻿using Acceloka.Commands;
+using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Acceloka.Controllers
 {
-    [Route("api/v1/category")]
+    [Route("api/v1/")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -18,14 +19,15 @@ namespace Acceloka.Controllers
         }
 
         // GET: api/<CategoryController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("get-categories")]
+        public async Task<IResult> GetCategories()
         {
-            return new string[] { "value1", "value2" };
+            var result = await _mediator.Send(new CategoriesQuery());
+            return result;  
         }
 
         // POST api/<CategoryController>
-        [HttpPost]
+        [HttpPost("insert-category")]
         public async Task<IResult> CreateCategory([FromBody] CategoryCommand command)
         {
             var result = await _mediator.Send(command);

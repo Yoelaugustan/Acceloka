@@ -1,4 +1,5 @@
 ﻿using Acceloka.Commands;
+using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Acceloka.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/")]
     [ApiController]
     public class TicketController : ControllerBase
     {
@@ -17,14 +18,15 @@ namespace Acceloka.Controllers
         }
 
         // GET: api/<TicketController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("get-available-ticket")]
+        public async Task<IResult> GetTickets([FromQuery] TicketsQuery query)
         {
-            return new string[] { "value1", "value2" };
+            var result = await _mediator.Send(query);
+            return result;
         }
 
         // POST api/<TicketController>
-        [HttpPost]
+        [HttpPost("insert-tickets")]
         public async Task<IResult> CreateTicket([FromBody] TicketCommand command)
         {
             var result = await _mediator.Send(command);
