@@ -1,11 +1,11 @@
-﻿using Acceloka.Commands;    
+﻿using Acceloka.Commands;
 using FluentValidation;
 
-namespace Acceloka.Validators
+namespace Acceloka.Validators.TicketValidator
 {
-    public class TicketValidator : AbstractValidator<TicketCommand>
+    public class PostTicketValidator : AbstractValidator<TicketCommand>
     {
-        public TicketValidator()
+        public PostTicketValidator()
         {
             RuleFor(t => t.Code)
                 .NotEmpty().WithMessage("Ticket code is required.")

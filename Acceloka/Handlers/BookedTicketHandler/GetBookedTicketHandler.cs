@@ -1,17 +1,22 @@
-﻿using Acceloka.Entities;
+﻿using Acceloka.Commands;
+using Acceloka.Entities;
 using Acceloka.Queries;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Acceloka.Handlers.BookedTicketHandler
 {
     public class GetBookedTicketHandler : IRequestHandler<BookedTicketQuery, IResult>
     {
         private readonly AccelokaDbContext _db;
+        private readonly IValidator<BookedTicketQuery> _validator;
 
-        public GetBookedTicketHandler(AccelokaDbContext db)
+        public GetBookedTicketHandler(AccelokaDbContext db, IValidator<BookedTicketQuery> validator)
         {
             _db = db;
+            _validator = validator;
         }
 
         public async Task<IResult> Handle(BookedTicketQuery request, CancellationToken ct)
@@ -26,6 +31,14 @@ namespace Acceloka.Handlers.BookedTicketHandler
                     statusCode: StatusCodes.Status400BadRequest,
                     title: "Validation Error"
                 );
+            }
+
+            // Input Validation
+            var validationResult = await _validator.ValidateAsync(request, ct);
+
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
             // Get all booked tickets with ticket details
