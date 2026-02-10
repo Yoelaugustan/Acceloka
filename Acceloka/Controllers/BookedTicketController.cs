@@ -1,4 +1,5 @@
 ﻿using Acceloka.Commands;
+using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,12 +18,12 @@ namespace Acceloka.Controllers
         }
 
         // GET api/<BookedTicketController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("get-booked-ticket/{BookedTicketId}")]
+        public async Task<IResult> GetBookedTickets([FromRoute] int BookedTicketId)
         {
-            return "value";
+            var result = await _mediator.Send(new BookedTicketQuery(BookedTicketId));
+            return result;
         }
-
         // POST api/<BookedTicketController>
         [HttpPost("book-ticket")]
         public async Task<IResult> CreateBookedTicket([FromBody] BookedTicketCommand command)

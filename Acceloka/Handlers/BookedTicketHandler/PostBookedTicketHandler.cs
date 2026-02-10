@@ -84,6 +84,7 @@ namespace Acceloka.Handlers.BookedTicketHandler
             _db.BookedTickets.Add(newBookedTicket);
             await _db.SaveChangesAsync(ct);
 
+            // Get all booked tickets with tickets details
             var allBookings = await _db.BookedTickets
                 .Include(b => b.TicketCodeNavigation)
                 .ToListAsync(ct);
