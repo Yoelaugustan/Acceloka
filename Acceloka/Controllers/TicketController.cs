@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Acceloka.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/")]
     [ApiController]
     public class TicketController : ControllerBase
     {
@@ -18,7 +18,7 @@ namespace Acceloka.Controllers
         }
 
         // GET: api/<TicketController>
-        [HttpGet]
+        [HttpGet("get-available-ticket")]
         public async Task<IResult> GetTickets([FromQuery] TicketsQuery query)
         {
             var result = await _mediator.Send(query);
@@ -26,7 +26,7 @@ namespace Acceloka.Controllers
         }
 
         // POST api/<TicketController>
-        [HttpPost]
+        [HttpPost("insert-tickets")]
         public async Task<IResult> CreateTicket([FromBody] TicketCommand command)
         {
             var result = await _mediator.Send(command);

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Acceloka.Controllers
 {
-    [Route("api/v1/category")]
+    [Route("api/v1/")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace Acceloka.Controllers
         }
 
         // GET: api/<CategoryController>
-        [HttpGet]
+        [HttpGet("get-categories")]
         public async Task<IResult> GetCategories()
         {
             var result = await _mediator.Send(new CategoriesQuery());
@@ -27,7 +27,7 @@ namespace Acceloka.Controllers
         }
 
         // POST api/<CategoryController>
-        [HttpPost]
+        [HttpPost("insert-category")]
         public async Task<IResult> CreateCategory([FromBody] CategoryCommand command)
         {
             var result = await _mediator.Send(command);
