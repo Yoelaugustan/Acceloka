@@ -18,6 +18,9 @@ namespace Acceloka.Handlers.CategoryHandler
         {
             var query = _db.Tickets.AsQueryable();
 
+            // Only show tickets that has quota
+            query = query.Where(t => t.Quota > 0);
+
             // Fileter By Name
             if (!string.IsNullOrEmpty(request.categoryName))
             {
