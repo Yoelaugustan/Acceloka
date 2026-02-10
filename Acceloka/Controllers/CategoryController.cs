@@ -1,4 +1,5 @@
 ﻿using Acceloka.Commands;
+using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +20,10 @@ namespace Acceloka.Controllers
 
         // GET: api/<CategoryController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IResult> GetCategories()
         {
-            return new string[] { "value1", "value2" };
+            var result = await _mediator.Send(new CategoriesQuery());
+            return result;  
         }
 
         // POST api/<CategoryController>
