@@ -6,10 +6,6 @@ namespace Acceloka.Entities;
 
 public partial class AccelokaDbContext : DbContext
 {
-    public AccelokaDbContext()
-    {
-    }
-
     public AccelokaDbContext(DbContextOptions<AccelokaDbContext> options)
         : base(options)
     {
@@ -17,24 +13,45 @@ public partial class AccelokaDbContext : DbContext
 
     public virtual DbSet<BookedTicket> BookedTickets { get; set; }
 
+    public virtual DbSet<Booking> Bookings { get; set; }
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Ticket> Tickets { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=AccelokaDb;User id=sa;Pwd=HelloWorld123!;Encrypt=false");
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=AccelokaDb;User id=sa;Pwd=HelloWorld123!;Encrypt=false");
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BookedTicket>(entity =>
         {
-            entity.HasKey(e => e.BookedTicketId).HasName("PK__BookedTi__9110472FE6053F8C");
+            entity.HasKey(e => e.BookedTicketDetailId).HasName("PK__BookedTi__3C836D9382A8808C");
 
-            entity.HasOne(d => d.Ticket).WithMany(p => p.BookedTickets)
-                .HasForeignKey(d => d.TicketId)
+            entity.Property(e => e.TicketCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.BookedTicketNavigation).WithMany(p => p.BookedTickets)
+                .HasForeignKey(d => d.BookedTicketId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BookedTickets_Bookings");
+
+            entity.HasOne(d => d.TicketCodeNavigation).WithMany(p => p.BookedTickets)
+                .HasPrincipalKey(p => p.TicketCode)
+                .HasForeignKey(d => d.TicketCode)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BookedTickets_Tickets");
+        });
+
+        modelBuilder.Entity<Booking>(entity =>
+        {
+            entity.HasKey(e => e.BookedTicketId).HasName("PK__Bookings__9110472F48D0BF3D");
         });
 
         modelBuilder.Entity<Category>(entity =>
