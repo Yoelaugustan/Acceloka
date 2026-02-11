@@ -7,7 +7,7 @@
 
 ### 2. Database Setup
 #### a. Configure Database Connection
-Update the `ConnectionStrings:SQLServerDB` entry to point to your SQL Server instance.
+Open `Acceloka/appsettings.json` and update the `ConnectionStrings:SQLServerDB` entry to point to your SQL Server instance.
 
 **Example:**
 ```bash
