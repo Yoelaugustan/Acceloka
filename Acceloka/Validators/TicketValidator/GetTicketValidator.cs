@@ -20,7 +20,7 @@ namespace Acceloka.Validators.TicketValidator
                 .GreaterThanOrEqualTo(x => x.minEventDate)
                 .When(x => x.minEventDate.HasValue && x.maxEventDate.HasValue).WithMessage("End of the Event Date must not be less than Start of the Event Date");
             RuleFor(x => x.orderBy)
-                .Must(value => new[] { "categoryname", "ticketname", "price", "eventdate" }.Contains(value.ToLower()))
+                .Must(value => new[] { "ticketcode", "categoryname", "ticketname", "price", "eventdate" }.Contains(value.ToLower()))
                 .When(x => !string.IsNullOrEmpty(x.orderBy))
                 .WithMessage("Column sorting isn't valid.");
 
