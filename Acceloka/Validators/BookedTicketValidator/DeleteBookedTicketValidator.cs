@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Acceloka.Validators.BookedTicketValidator
 {
-    public class DeleteBookedTicketValidator : AbstractValidator<DeleteTicketCommand>
+    public class DeleteBookedTicketValidator : AbstractValidator<DeleteBookedTicketCommand>
     {
         public DeleteBookedTicketValidator()
         {

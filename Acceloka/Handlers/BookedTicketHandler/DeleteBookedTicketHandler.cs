@@ -9,18 +9,18 @@ using System.ComponentModel.DataAnnotations;
 namespace Acceloka.Handlers.BookedTicketHandler
 {
 
-    public class DeleteBookedTicketHandler : IRequestHandler<DeleteTicketCommand, IResult>
+    public class DeleteBookedTicketHandler : IRequestHandler<DeleteBookedTicketCommand, IResult>
     {
         private readonly AccelokaDbContext _db;
-        private readonly IValidator<DeleteTicketCommand> _validator;
+        private readonly IValidator<DeleteBookedTicketCommand> _validator;
 
-        public DeleteBookedTicketHandler(AccelokaDbContext db, IValidator<DeleteTicketCommand> validator)
+        public DeleteBookedTicketHandler(AccelokaDbContext db, IValidator<DeleteBookedTicketCommand> validator)
         {
             _db = db;
             _validator = validator;
         }
 
-        public async Task<IResult> Handle(DeleteTicketCommand request, CancellationToken ct)
+        public async Task<IResult> Handle(DeleteBookedTicketCommand request, CancellationToken ct)
         {
             // input validation
             var validationResult = await _validator.ValidateAsync(request, ct);
