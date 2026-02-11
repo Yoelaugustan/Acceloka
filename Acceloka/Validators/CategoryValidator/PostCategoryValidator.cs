@@ -1,11 +1,11 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.Category;
 using FluentValidation;
 
-namespace Acceloka.Validators
+namespace Acceloka.Validators.CategoryValidator
 {
-    public class CategoryValidator : AbstractValidator<CategoryCommand>
+    public class PostCategoryValidator : AbstractValidator<PostCategoryCommand>
     {
-        public CategoryValidator()
+        public PostCategoryValidator()
         {   
             RuleFor(c => c.Name)
                 .NotEmpty().WithMessage("Category name is required.")

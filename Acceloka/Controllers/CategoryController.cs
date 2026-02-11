@@ -1,7 +1,8 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.Category;
 using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -28,9 +29,17 @@ namespace Acceloka.Controllers
 
         // POST api/<CategoryController>
         [HttpPost("insert-category")]
-        public async Task<IResult> CreateCategory([FromBody] CategoryCommand command)
+        public async Task<IResult> CreateCategory([FromBody] PostCategoryCommand command)
         {
             var result = await _mediator.Send(command);
+            return result;
+        }
+
+        // DELETE api/<CategoryController>
+        [HttpDelete("delete-category/{CategoryName}")]
+        public async Task<IResult> DeleteCategory([FromRoute] string CategoryName)
+        {
+            var result = await _mediator.Send(new DeleteCategoryCommand(CategoryName));
             return result;
         }
     }
