@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace Acceloka.Commands
+namespace Acceloka.Commands.Ticket
 {
-    public class TicketCommand : IRequest<IResult>
+    public class PostTicketCommand : IRequest<IResult>
     {
         public string Code { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;

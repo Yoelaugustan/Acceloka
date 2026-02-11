@@ -1,4 +1,4 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.Ticket;
 using Acceloka.Entities;
 using FluentValidation;
 using MediatR;
@@ -7,17 +7,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Acceloka.Handlers.TicketHandler
 {
-    public class PostTicketHandler : IRequestHandler<TicketCommand, IResult>
+    public class PostTicketHandler : IRequestHandler<PostTicketCommand, IResult>
     {
         private readonly AccelokaDbContext _db;
-        private readonly IValidator<TicketCommand> _validator;
-        public PostTicketHandler(AccelokaDbContext db, IValidator<TicketCommand> validator)
+        private readonly IValidator<PostTicketCommand> _validator;
+        public PostTicketHandler(AccelokaDbContext db, IValidator<PostTicketCommand> validator)
         {
             _db = db;
             _validator = validator;
         }
 
-        public async Task<IResult> Handle(TicketCommand request, CancellationToken ct)
+        public async Task<IResult> Handle(PostTicketCommand request, CancellationToken ct)
         {
             // Check if ticket code already exists
             var exist = await _db.Tickets

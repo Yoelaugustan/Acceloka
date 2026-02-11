@@ -1,9 +1,9 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.Ticket;
 using FluentValidation;
 
 namespace Acceloka.Validators.TicketValidator
 {
-    public class PostTicketValidator : AbstractValidator<TicketCommand>
+    public class PostTicketValidator : AbstractValidator<PostTicketCommand>
     {
         public PostTicketValidator()
         {
