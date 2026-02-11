@@ -34,16 +34,18 @@ namespace Acceloka.Controllers
         }
 
         // PUT api/<BookedTicketController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("edit-booked-ticket/{BookedTicketId}")]
+        public async Task<IResult> PutBookedTicket([FromRoute] int BookedTicketId, [FromBody] List<PutTicketRequestItem> items)
         {
+            var result = await _mediator.Send(new PutBookedTicketCommand(BookedTicketId, items));
+            return result;
         }
 
         // DELETE api/<BookedTicketController>/5
         [HttpDelete("revoke-ticket/{BookedTicketId}/{TicketCode}/{Qty}")]
-        public async Task<IResult> RevokeTicket([FromRoute] int BookedTicketId, [FromRoute] string TicketCode, [FromRoute] int Qty)
+        public async Task<IResult> RevokeBookedTicket([FromRoute] int BookedTicketId, [FromRoute] string TicketCode, [FromRoute] int Qty)
         {
-            var result = await _mediator.Send(new DeleteTicketCommand(BookedTicketId, TicketCode, Qty));
+            var result = await _mediator.Send(new DeleteBookedTicketCommand(BookedTicketId, TicketCode, Qty));
             return result;
         }
     }
