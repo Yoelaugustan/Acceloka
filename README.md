@@ -7,13 +7,13 @@
 
 ### 2. Database Setup
 #### a. Configure Database Connection
-Update `ConnectionStrings:SQLServerDB` in `Acceloka/appsettings.json`
+Update the `ConnectionStrings:SQLServerDB` entry to point to your SQL Server instance.
 
 **Example:**
 ```bash
   {
     "ConnectionStrings": {
-      "SQLServerDB":"Server=(localdb)\\mssqllocaldb;Database=AccelokaDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+      "SQLServerDB":"Server=localhost;Initial Catalog=AccelokaDb;User id=sa;Pwd=HelloWorld123!;Encrypt=false"
     }
   }
 ```
