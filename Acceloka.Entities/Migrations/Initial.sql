@@ -24,13 +24,18 @@ CREATE TABLE Tickets
         REFERENCES Categories(CategoryName)
 );
 
-CREATE TABLE BookedTickets
-(
+CREATE TABLE Bookings (
     BookedTicketId INT IDENTITY(1,1) PRIMARY KEY,
-    TicketId INT NOT NULL,
-    Quantity INT NOT NULL,
+);
 
+CREATE TABLE BookedTickets (
+    BookedTicketDetailId INT IDENTITY(1,1) PRIMARY KEY,
+    BookedTicketId INT NOT NULL,
+    TicketCode VARCHAR(50) NOT NULL, 
+    Quantity INT NOT NULL,
+    
+    CONSTRAINT FK_BookedTickets_Bookings 
+        FOREIGN KEY (BookedTicketId) REFERENCES Bookings(BookedTicketId),
     CONSTRAINT FK_BookedTickets_Tickets 
-        FOREIGN KEY (TicketId) 
-        REFERENCES Tickets(TicketId),
+        FOREIGN KEY (TicketCode) REFERENCES Tickets(TicketCode)
 );
