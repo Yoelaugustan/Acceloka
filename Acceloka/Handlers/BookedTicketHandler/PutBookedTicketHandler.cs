@@ -72,7 +72,7 @@ namespace Acceloka.Handlers.BookedTicketHandler
 
                 if (diff > detail.TicketCodeNavigation.Quota)
                 {
-                    return Results.Problem(detail: $"Quantity '{item.TicketCode}' melebihi sisa quota ({detail.TicketCodeNavigation.Quota})", statusCode: 400);
+                    return Results.Problem(detail: $"Quantity '{item.TicketCode}' is greater than the remaining quota ({detail.TicketCodeNavigation.Quota})", statusCode: 400);
                 }
 
                 detail.TicketCodeNavigation.Quota -= diff;
