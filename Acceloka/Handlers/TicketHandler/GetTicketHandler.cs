@@ -78,28 +78,31 @@ namespace Acceloka.Handlers.CategoryHandler
                 _ => query.OrderBy(t => t.TicketCode) // Default order
             };
 
-            var totalTickets = await query.CountAsync();
+            const int DEFAULT_PAGE_SIZE = 10;
+            var totalTickets = await query.CountAsync(ct);
 
-            // Show Result
+            int totalPages = (int)Math.Ceiling((double)totalTickets / DEFAULT_PAGE_SIZE);
+
+            // Show Result with pagination
             var result = await query
-                .Skip((request.pageNumber-1) * request.pageSize)
-                .Take(request.pageSize)
+                .Skip((request.pageNumber - 1) * DEFAULT_PAGE_SIZE)
+                .Take(DEFAULT_PAGE_SIZE)
                 .Select(t => new
-                    {
-                        eventDate = t.EventDate.ToString("dd-MM-yyyy HH:mm"),
-                        quota = t.Quota,
-                        ticketCode = t.TicketCode,
-                        ticketName = t.TicketName,
-                        categoryName = t.CategoryName,
-                        price = t.Price
-                    }).ToListAsync(ct);
+                 {
+                     eventDate = t.EventDate.ToString("dd-MM-yyyy HH:mm"),
+                     quota = t.Quota,
+                     ticketCode = t.TicketCode,
+                     ticketName = t.TicketName,
+                     categoryName = t.CategoryName,
+                     price = t.Price
+                 }).ToListAsync(ct);
 
-            return Results.Ok(new 
-            { 
+            return Results.Ok(new
+            {
                 tickets = result,
-                totalTickets = totalTickets
+                totalTickets = totalTickets,
+                pages = $"{request.pageNumber}/{totalPages}" // to show how many pages there is and show the current page
             });
-
         }
     }
 }
