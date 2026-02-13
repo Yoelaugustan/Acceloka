@@ -9,7 +9,7 @@ namespace Acceloka.Validators.TicketValidator
         public GetTicketValidator()
         {
             RuleFor(x => x.categoryName)
-                .MaximumLength(30).WithMessage("Category name must not exceed 30 characters.");
+                .MaximumLength(50).WithMessage("Category name must not exceed 50 characters.");
             RuleFor(x => x.ticketCode)
                 .MaximumLength(10).WithMessage("Ticket code must not exceed 10 characters.");
             RuleFor(x => x.ticketName)
