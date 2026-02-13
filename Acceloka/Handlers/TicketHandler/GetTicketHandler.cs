@@ -78,18 +78,27 @@ namespace Acceloka.Handlers.CategoryHandler
                 _ => query.OrderBy(t => t.TicketCode) // Default order
             };
 
-            // Show Result
-            var result = await query.Select(t => new
-            {
-                categoryName = t.CategoryName,
-                ticketCode = t.TicketCode,
-                ticketName = t.TicketName,
-                eventDate = t.EventDate.ToString("dd-MM-yyyy HH:mm"),
-                price = t.Price,
-                quota = t.Quota
-            }).ToListAsync(ct);
+            var totalTickets = await query.CountAsync();
 
-            return Results.Ok(new { tickets = result });
+            // Show Result
+            var result = await query
+                .Skip((request.pageNumber-1) * request.pageSize)
+                .Take(request.pageSize)
+                .Select(t => new
+                    {
+                        eventDate = t.EventDate.ToString("dd-MM-yyyy HH:mm"),
+                        quota = t.Quota,
+                        ticketCode = t.TicketCode,
+                        ticketName = t.TicketName,
+                        categoryName = t.CategoryName,
+                        price = t.Price
+                    }).ToListAsync(ct);
+
+            return Results.Ok(new 
+            { 
+                tickets = result,
+                totalTickets = totalTickets
+            });
 
         }
     }

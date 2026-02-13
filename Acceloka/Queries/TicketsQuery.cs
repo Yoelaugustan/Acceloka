@@ -12,5 +12,7 @@ namespace Acceloka.Queries
         public DateTime? maxEventDate { get; set; }
         public string? orderBy { get; set; } = "ticketCode";
         public string? orderState { get; set; } = "asc";
+        public int pageNumber { get; set; } = 1;
+        public int pageSize { get; set; } = 10;
     }
 }
