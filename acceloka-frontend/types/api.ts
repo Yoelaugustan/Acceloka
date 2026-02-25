@@ -41,3 +41,53 @@ export interface FilterModalProps {
   onSave: (data: FilterData) => void;
   initialFilters: FilterData;
 }
+
+export interface CartItem {
+  ticketCode: string;
+  quantity: number;
+  ticketName: string;
+  price: number;
+}
+
+export type ModalMode = "book" | "create";
+
+export interface BookModalProps {
+  ticket: Ticket;
+  onClose: () => void;
+}
+
+export interface CreateModalProps {
+  onClose: () => void;
+  onCreated: (ticket: Ticket) => void;
+}
+
+export interface TicketModalProps {
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+export interface CartItem {
+  ticketCode: string;
+  quantity: number;
+  ticketName: string;
+  price: number;
+  categoryName: string;
+  quota: number;
+}
+
+export interface CartContextType {
+  cart: CartItem[];
+  addToCart: (ticketCode: string, quantity: number, ticketName: string, price: number, categoryName: string, quota: number) => void;
+  removeFromCart: (ticketCode: string) => void;
+  updateCartQuantity: (ticketCode: string, newQuantity: number) => void;
+  getUniqueItemCount: () => number;
+}
+
+export interface TicketCardProps extends Ticket {
+  onBookClick: (ticket: Ticket) => void;
+}
+
+export interface CartModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}

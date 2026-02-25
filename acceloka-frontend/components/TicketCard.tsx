@@ -1,20 +1,36 @@
 import { Ticket } from "@/types/api";
-import { useState } from "react";
+import { useCart } from "@/context/CartContext";
+import { useEffect, useState } from "react";
 
-export default function TicketCard({
-  categoryName,
-  eventDate,
-  price,
-  quota,
-  ticketCode,
-  ticketName,
-}: Ticket) {
-  const [added, setAdded] = useState<boolean>(false);
+interface TicketCardProps extends Ticket {
+  onBookClick: (ticket: Ticket) => void;
+}
+
+export default function TicketCard(props: TicketCardProps) {
+  const {
+    categoryName,
+    eventDate,
+    price,
+    quota,
+    ticketCode,
+    ticketName,
+    onBookClick,
+  } = props;
+  const { cart } = useCart();
   const isLow: boolean = quota <= 5;
 
-  const handleAdd = (): void => {
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+  const isAddedToCart = cart.some((item) => item.ticketCode === ticketCode);
+
+  const handleAddClick = (): void => {
+    onBookClick({
+      categoryName,
+      eventDate,
+      price,
+      quota,
+      ticketCode,
+      ticketName,
+      ticketId: 0,
+    });
   };
 
   return (
@@ -22,50 +38,49 @@ export default function TicketCard({
       className="relative flex items-stretch w-96 my-4 rounded-xl border-2 border-yellow-500 shadow-lg font-mono"
       style={{ background: "#f5c842", overflow: "visible" }}
     >
-      {/* Left hole */}
+      {/* ticket UI */}
       <div
         className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-7 h-7 rounded-full border-2 border-yellow-500 z-10"
         style={{ left: 0, background: "#f0ede6" }}
       />
 
-      {/* Right hole */}
       <div
         className="absolute top-1/2 -translate-y-1/2 translate-x-1/2 w-7 h-7 rounded-full border-2 border-yellow-500 z-10"
         style={{ right: 0, background: "#f0ede6" }}
       />
 
-      {/* Tear line */}
       <div
         className="absolute top-0 bottom-0 border-l-2 border-dashed border-yellow-500 z-10"
         style={{ right: 120 }}
       />
 
-      {/* Main content */}
       <div
         className="flex-1 flex flex-col gap-1.5 p-5"
         style={{ paddingRight: 48 }}
       >
-        {/* Title row */}
+        {/* ticket name */}
         <div className="flex items-center gap-2 mb-1">
           <span className="text-lg font-bold font-mono tracking-wider text-yellow-950">
             {ticketName}
           </span>
         </div>
 
-        {/* Code & Category*/}
+        {/* ticket code and category */}
         <div className="flex items-center gap-1.5 text-xs text-yellow-900">
           <span className="font-bold">{ticketCode}</span>
           <span className="opacity-50">—</span>
           <span>{categoryName}</span>
         </div>
 
-        {/* Date */}
+        {/* ticket date */}
         <div className="text-xs text-yellow-900">{eventDate}</div>
 
-        {/* Price */}
-        <div className="text-base font-bold text-yellow-950 mt-1">{price}</div>
+        {/* ticket price */}
+        <div className="text-base font-bold text-yellow-950 mt-1">
+          Rp. {price.toLocaleString("id-ID")}
+        </div>
 
-        {/* Remaining */}
+        {/* ticket quota */}
         <div
           className={`flex items-center gap-2 text-xs mt-0.5 ${
             isLow ? "text-orange-600" : "text-yellow-800"
@@ -80,20 +95,21 @@ export default function TicketCard({
         </div>
       </div>
 
-      {/* Stub */}
+      {/* add to cart button */}
       <div
         className="flex items-center justify-center px-3"
         style={{ width: 120 }}
       >
         <button
-          onClick={handleAdd}
+          onClick={handleAddClick}
           className={`w-full py-2.5 px-3 rounded-lg text-white text-xs font-bold tracking-wide shadow-md transition-all duration-300 cursor-pointer ${
-            added
+            isAddedToCart
               ? "bg-green-700"
               : "bg-stone-800 hover:bg-stone-700 active:scale-95"
           }`}
+          disabled={isAddedToCart}
         >
-          {added ? "✓ Added!" : "Add to Cart"}
+          {isAddedToCart ? "Successful" : "Add to Cart"}
         </button>
       </div>
     </div>

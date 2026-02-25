@@ -2,6 +2,9 @@
 
 import FilterModal from "@/components/FilterModel";
 import TicketCard from "@/components/TicketCard";
+import { BookModal } from "@/components/BookModal";
+import { CartModal } from "@/components/CartModal";
+import { CartProvider, useCart } from "@/context/CartContext";
 import { FilterData, Ticket } from "@/types/api";
 import {
   CalendarDotsIcon,
@@ -15,6 +18,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const { RangePicker } = DatePicker;
 
+// set default value for the filter
 const defaultFilters: FilterData = {
   priceRange: null,
   category: null,
@@ -23,6 +27,16 @@ const defaultFilters: FilterData = {
 };
 
 export default function TicketsPage() {
+  return (
+    // use cart provider to access the cart items and functions
+    <CartProvider>
+      <ViewTicketsPage />
+    </CartProvider>
+  );
+}
+
+// view ticket
+function ViewTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -36,6 +50,12 @@ export default function TicketsPage() {
   >(null);
   const [search, setSearch] = useState("");
 
+  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+
+  // count the filters used
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (filters.category) count++;
@@ -49,11 +69,17 @@ export default function TicketsPage() {
     setDateRange(null);
   };
 
+  const handleBookClick = (ticket: Ticket) => {
+    setSelectedTicket(ticket);
+    setIsBookModalOpen(true);
+  };
+
   useEffect(() => {
     const fetchTickets = async () => {
       setLoading(true);
       console.log(filters);
       try {
+        // insert the filter to the query params
         const queryParams = new URLSearchParams();
         queryParams.append("pageNumber", page.toString());
 
@@ -79,6 +105,7 @@ export default function TicketsPage() {
           queryParams.append("maxEventDate", dateRange[1].toISOString());
         }
 
+        // fetch tickets
         const response = await fetch(
           `http://localhost:5224/api/v1/get-available-ticket?${queryParams.toString()}`,
         );
@@ -87,6 +114,7 @@ export default function TicketsPage() {
         setTickets(data.tickets || []);
         setTotalTickets(data.totalTickets || 0);
 
+        // pagination
         if (data.pages) {
           const total = parseInt(data.pages.split("/")[1]);
           setTotalPages(total);
@@ -101,11 +129,15 @@ export default function TicketsPage() {
     fetchTickets();
   }, [page, filters, dateRange, search]);
 
+  // to show the cart item amount
+  const { getUniqueItemCount } = useCart();
+
   return (
     <div className="p-6 flex flex-col h-full bg-white">
       {/* Header Section */}
       <div className="flex justify-between items-start mb-6">
         <div>
+          {/* header */}
           <h1 className="text-4xl font-bold text-[#334155]">
             Find Your Next Experience
           </h1>
@@ -114,7 +146,19 @@ export default function TicketsPage() {
             clicks.
           </p>
         </div>
-        <ShoppingCartIcon size={32} weight="fill" color="#958C55" />
+
+        {/* cart */}
+        <div
+          className="relative cursor-pointer"
+          onClick={() => setIsCartModalOpen(true)}
+        >
+          <ShoppingCartIcon size={32} weight="fill" color="#958C55" />
+          {getUniqueItemCount() > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+              {getUniqueItemCount()}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -133,6 +177,7 @@ export default function TicketsPage() {
           />
         </div>
 
+        {/* date picker */}
         <div className="flex items-center gap-2 cursor-pointer">
           <RangePicker
             variant="filled"
@@ -145,6 +190,7 @@ export default function TicketsPage() {
           />
         </div>
 
+        {/* filter */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 relative">
             <FunnelIcon
@@ -168,7 +214,7 @@ export default function TicketsPage() {
             </button>
           )}
 
-          <span className="text-sm text-slate-500 italic">
+          <span className="text-sm text-slate-500 italic whitespace-nowrap">
             {activeFilterCount} filters in use
           </span>
         </div>
@@ -180,25 +226,33 @@ export default function TicketsPage() {
           initialFilters={filters}
         />
 
-        <span className="ml-auto font-bold text-[#334155]">
+        {/* show total tickets */}
+        <span className="ml-auto font-bold text-[#334155] whitespace-nowrap">
           {totalTickets} tickets total
         </span>
       </div>
 
+      {/* ticket items */}
       <div className="flex-1 overflow-y-auto p-6 pt-2">
         {loading ? (
+          // show loading when fetching
           <div>
             <p className="text-center mt-10">Loading...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {tickets.map((t) => (
-              <TicketCard key={t.ticketCode} {...t} />
+              <TicketCard
+                key={t.ticketCode}
+                {...t}
+                onBookClick={handleBookClick}
+              />
             ))}
           </div>
         )}
       </div>
 
+      {/* page number */}
       <div className="pt-6 bg-white flex justify-center items-center gap-4">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -220,6 +274,21 @@ export default function TicketsPage() {
           next
         </button>
       </div>
+
+      {/* show book modal and cart modal */}
+      {selectedTicket && isBookModalOpen && (
+        <BookModal
+          ticket={selectedTicket}
+          onClose={() => setIsBookModalOpen(false)}
+        />
+      )}
+
+      {isCartModalOpen && (
+        <CartModal
+          isOpen={isCartModalOpen}
+          onClose={() => setIsCartModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
