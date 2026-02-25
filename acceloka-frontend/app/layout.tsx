@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Spline_Sans, DM_Mono } from 'next/font/google';
+import { Instrument_Sans, Spline_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 
-const instrument = Instrument_Sans({ 
-  subsets: ['latin'], 
-  variable: '--font-heading' 
+const instrument = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-heading",
 });
 
-const spline = Spline_Sans({ 
-  subsets: ['latin'], 
-  variable: '--font-body' 
+const spline = Spline_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
 });
 
-const dmMono = DM_Mono({ 
-  weight: ['400', '500'], 
-  subsets: ['latin'], 
-  variable: '--font-mono' 
+const dmMono = DM_Mono({
+  weight: ["400", "500"],
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -38,9 +38,7 @@ export default function RootLayout({
           <Sidebar />
         </aside>
 
-        <main className="flex-1 overflow-hidden">
-          {children}
-        </main>
+        <main className="flex-1 overflow-hidden">{children}</main>
       </body>
     </html>
   );
