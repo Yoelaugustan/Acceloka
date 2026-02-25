@@ -54,6 +54,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseCors("AllowNextJS");
+
 app.UseAuthorization();
 
 app.MapControllers();
