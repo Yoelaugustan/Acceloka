@@ -1,31 +1,93 @@
 "use client";
 
+import FilterModal from "@/components/FilterModel";
 import TicketCard from "@/components/TicketCard";
+import { FilterData, Ticket } from "@/types/api";
 import {
   CalendarDotsIcon,
   FunnelIcon,
   MagnifyingGlassIcon,
   ShoppingCartIcon,
 } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { DatePicker } from "antd";
+import { Dayjs } from "dayjs";
+import { useEffect, useMemo, useState } from "react";
+
+const { RangePicker } = DatePicker;
+
+const defaultFilters: FilterData = {
+  priceRange: null,
+  category: null,
+  orderBy: "ticketcode",
+  orderState: "asc",
+};
 
 export default function TicketsPage() {
-  const [tickets, setTickets] = useState([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalTickets, setTotalTickets] = useState(0);
+
+  const [isModalFilterOpen, setIsModalFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<FilterData>(defaultFilters);
+  const [dateRange, setDateRange] = useState<
+    [Dayjs | null, Dayjs | null] | null
+  >(null);
+  const [search, setSearch] = useState("");
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (filters.category) count++;
+    if (filters.priceRange) count++;
+    if (dateRange) count++;
+    return count;
+  }, [filters, dateRange]);
+
+  const handleClearFilters = () => {
+    setFilters(defaultFilters);
+    setDateRange(null);
+  };
 
   useEffect(() => {
     const fetchTickets = async () => {
       setLoading(true);
+      console.log(filters);
       try {
-        const response = await fetch(
-          "http://localhost:5224/api/v1/get-available-ticket",
-        );
-        const data = await response.json();
-        setTickets(data.tickets);
+        const queryParams = new URLSearchParams();
+        queryParams.append("pageNumber", page.toString());
 
-        if (data.page) {
+        if (filters.category) {
+          queryParams.append("categoryName", filters.category);
+        }
+        if (filters.priceRange) {
+          queryParams.append("maxPrice", filters.priceRange[1].toString());
+        }
+        if (filters.orderBy) {
+          queryParams.append("orderBy", filters.orderBy);
+        }
+        if (filters.orderState) {
+          queryParams.append("orderState", filters.orderState.toLowerCase());
+        }
+        if (search) {
+          queryParams.append("ticketName", search);
+        }
+        if (dateRange && dateRange[0]) {
+          queryParams.append("minEventDate", dateRange[0].toISOString());
+        }
+        if (dateRange && dateRange[1]) {
+          queryParams.append("maxEventDate", dateRange[1].toISOString());
+        }
+
+        const response = await fetch(
+          `http://localhost:5224/api/v1/get-available-ticket?${queryParams.toString()}`,
+        );
+
+        const data = await response.json();
+        setTickets(data.tickets || []);
+        setTotalTickets(data.totalTickets || 0);
+
+        if (data.pages) {
           const total = parseInt(data.pages.split("/")[1]);
           setTotalPages(total);
         }
@@ -37,7 +99,7 @@ export default function TicketsPage() {
     };
 
     fetchTickets();
-  }, [page]);
+  }, [page, filters, dateRange, search]);
 
   return (
     <div className="p-6 flex flex-col h-full bg-white">
@@ -60,6 +122,8 @@ export default function TicketsPage() {
         <div className="relative flex-1 max-w-2xl">
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search for events, hotels, or movie titles..."
             className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-[#334155] focus:border-[#958C55] outline-none transition-all text-[#334155]"
           />
@@ -68,10 +132,56 @@ export default function TicketsPage() {
             size={24}
           />
         </div>
-        <CalendarDotsIcon size={32} className="text-[#334155] cursor-pointer" />
-        <FunnelIcon size={32} className="text-[#334155] cursor-pointer" />
+
+        <div className="flex items-center gap-2 cursor-pointer">
+          <RangePicker
+            variant="filled"
+            suffixIcon={
+              <CalendarDotsIcon size={32} className="text-[#334155]" />
+            }
+            placeholder={["Start", "End"]}
+            onChange={(dates) => setDateRange(dates)}
+            className="hover:bg-slate-50 p-1 rounded-md"
+          />
+        </div>
+
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 relative">
+            <FunnelIcon
+              size={32}
+              className="cursor-pointer text-[#334155]"
+              onClick={() => setIsModalFilterOpen(true)}
+            />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                {activeFilterCount}
+              </span>
+            )}
+          </div>
+
+          {activeFilterCount > 0 && (
+            <button
+              onClick={handleClearFilters}
+              className="text-xs text-red-500 font-bold hover:underline cursor-pointer"
+            >
+              Clear Filters
+            </button>
+          )}
+
+          <span className="text-sm text-slate-500 italic">
+            {activeFilterCount} filters in use
+          </span>
+        </div>
+
+        <FilterModal
+          isOpen={isModalFilterOpen}
+          onClose={() => setIsModalFilterOpen(false)}
+          onSave={(data) => setFilters(data)}
+          initialFilters={filters}
+        />
+
         <span className="ml-auto font-bold text-[#334155]">
-          {tickets.length} tickets total
+          {totalTickets} tickets total
         </span>
       </div>
 

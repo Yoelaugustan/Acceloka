@@ -28,12 +28,16 @@ export interface BookedTicketDetail {
   ticketCode: string;
   quantity: number;
 }
+export interface FilterData {
+  priceRange: [number, number] | null;
+  category: string | null;
+  orderBy: string;
+  orderState: "asc" | "desc";
+}
 
-export interface ProblemDetails {
-  type?: string;
-  title: string;
-  status: number;
-  detail?: string;
-  instance?: string;
-  errors?: Record<string, string[]>;
-}   
+export interface FilterModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: FilterData) => void;
+  initialFilters: FilterData;
+}
