@@ -47,6 +47,9 @@ export interface CartItem {
   quantity: number;
   ticketName: string;
   price: number;
+  categoryName: string;
+  quota: number;
+  eventDate: string;
 }
 
 export type ModalMode = "book" | "create";
@@ -66,24 +69,6 @@ export interface TicketModalProps {
   children: React.ReactNode;
 }
 
-export interface CartItem {
-  ticketCode: string;
-  quantity: number;
-  ticketName: string;
-  price: number;
-  categoryName: string;
-  quota: number;
-  eventDate: string;
-}
-
-export interface CartContextType {
-  cart: CartItem[];
-  addToCart: (ticketCode: string, quantity: number, ticketName: string, price: number, categoryName: string, quota: number, eventDate: string) => void;
-  removeFromCart: (ticketCode: string) => void;
-  updateCartQuantity: (ticketCode: string, newQuantity: number) => void;
-  getUniqueItemCount: () => number;
-}
-
 export interface TicketCardProps extends Ticket {
   onBookClick: (ticket: Ticket) => void;
 }
@@ -93,10 +78,38 @@ export interface CartModalProps {
   onClose: () => void;
 }
 
-export interface StatusModalProps {
+export interface BookingDetailModalProps {
   isOpen: boolean;
-  type: "success" | "error";
-  title: string;
-  message: string;
   onClose: () => void;
+  bookedTicketId: number | null;
+}
+export interface BookingTicketProps {
+  booking: BookingSummary;
+  onViewDetails: (id: number) => void;
+}
+
+export interface BookingSummary {
+  bookedTicketId: number;
+  totalTickets: number;
+  totalPrice: number;
+}
+
+export interface BookingListResponse {
+  bookings: BookingSummary[];
+  totalBookings: number;
+  pages: string;
+}
+
+export interface BookedTicketItem {
+  ticketCode: string;
+  ticketName: string;
+  eventDate: string;
+  quantity: number;
+  quota: number;
+}
+
+export interface BookedTicketCategoryDetail {
+  qtyPerCategory: number;
+  categoryName: string;
+  tickets: BookedTicketItem[];
 }
