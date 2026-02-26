@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace Acceloka.Commands
+namespace Acceloka.Commands.Category
 {
-    public class CategoryCommand : IRequest <IResult>
+    public class PostCategoryCommand : IRequest <IResult>
     {
         public string Name { get; set;  } = string.Empty;
     }

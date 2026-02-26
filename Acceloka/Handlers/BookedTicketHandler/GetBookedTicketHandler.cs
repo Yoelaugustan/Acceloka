@@ -1,56 +1,66 @@
-﻿using Acceloka.Entities;
+﻿using Acceloka.Commands;
+using Acceloka.Entities;
 using Acceloka.Queries;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace Acceloka.Handlers.BookedTicketHandler
 {
     public class GetBookedTicketHandler : IRequestHandler<BookedTicketQuery, IResult>
     {
         private readonly AccelokaDbContext _db;
+        private readonly IValidator<BookedTicketQuery> _validator;
 
-        public GetBookedTicketHandler(AccelokaDbContext db)
+        public GetBookedTicketHandler(AccelokaDbContext db, IValidator<BookedTicketQuery> validator)
         {
             _db = db;
+            _validator = validator;
         }
 
         public async Task<IResult> Handle(BookedTicketQuery request, CancellationToken ct)
         {
-            var exist = await _db.BookedTickets
-                .AnyAsync(bt => bt.BookedTicketId == request.BookedTicketId, ct);
+            // Input Validation
+            var validationResult = await _validator.ValidateAsync(request, ct);
 
-            if (!exist)
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+
+            var bookingDetails = await _db.BookedTickets
+                .Include(x => x.TicketCodeNavigation)
+                .Where(x => x.BookedTicketId == request.BookedTicketId)
+                .ToListAsync(ct);
+
+            // validate in booking exists
+            if (!bookingDetails.Any())
             {
                 return Results.Problem(
-                    detail: $"Booked Ticket with ID '{request.BookedTicketId}' does not exists.",
+                    detail: $"BookedtiketId {request.BookedTicketId} does not exist",
                     statusCode: StatusCodes.Status400BadRequest,
                     title: "Validation Error"
                 );
             }
 
-            // Get all booked tickets with ticket details
-            var allBookings = await _db.BookedTickets
-                .Include(b => b.TicketCodeNavigation)
-                .ToListAsync(ct);
-
-            var ticketsPerCategories = allBookings
-                .GroupBy(b => b.TicketCodeNavigation.CategoryName) // categories the booking
-                .Select(g => new    // select each category
+            // get tickets per categories
+            var result = bookingDetails
+                .GroupBy(x => x.TicketCodeNavigation.CategoryName)
+                .Select(group => new
                 {
-                    qtyPerCategory = g.Sum(x => x.Quantity),
-                    categoryName = g.Key,
-                    tickets = g.Select(x => new // select each ticket in the category
+                    qtyPerCategory = group.Sum(x => x.Quantity),
+                    categoryName = group.Key,
+                    tickets = group.Select(t => new
                     {
-                        ticketCode = x.TicketCode,
-                        ticketName = x.TicketCodeNavigation.TicketName,
-                        eventDate = x.TicketCodeNavigation.EventDate.ToString("dd-MM-yyyy HH:mm"),
+                        ticketCode = t.TicketCode,
+                        ticketName = t.TicketCodeNavigation.TicketName,
+                        eventDate = t.TicketCodeNavigation.EventDate.ToString("dd-MM-yyyy HH:mm"),
                     }).ToList()
                 }).ToList();
 
-            return Results.Ok(new
-            {
-                ticketsPerCategories = ticketsPerCategories
-            });
+            return Results.Ok(result);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.Category;
+using Acceloka.Commands.Ticket;
 using Acceloka.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,17 @@ namespace Acceloka.Controllers
 
         // POST api/<TicketController>
         [HttpPost("insert-tickets")]
-        public async Task<IResult> CreateTicket([FromBody] TicketCommand command)
+        public async Task<IResult> CreateTicket([FromBody] PostTicketCommand command)
         {
             var result = await _mediator.Send(command);
+            return result;
+        }
+
+        // DELETE api/<TicketController>
+        [HttpDelete("delete-ticket/{TicketCode}")]
+        public async Task<IResult> DeleteCategory([FromRoute] string TicketCode)
+        {
+            var result = await _mediator.Send(new DeleteTicketCommand(TicketCode));
             return result;
         }
     }

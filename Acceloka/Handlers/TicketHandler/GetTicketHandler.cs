@@ -1,21 +1,32 @@
-﻿using Acceloka.Entities;
+﻿using Acceloka.Commands;
+using Acceloka.Entities;
 using Acceloka.Queries;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Acceloka.Handlers.CategoryHandler
 {
     public class GetTicketHandler : IRequestHandler<TicketsQuery, IResult>
     {
         private readonly AccelokaDbContext _db;
+        private readonly IValidator<TicketsQuery> _validator;
 
-        public GetTicketHandler(AccelokaDbContext db)
+        public GetTicketHandler(AccelokaDbContext db, IValidator<TicketsQuery> validator)
         {
             _db = db;
+            _validator = validator;
         }
 
         public async Task<IResult> Handle(TicketsQuery request, CancellationToken ct)
         {
+            var validationResult = await _validator.ValidateAsync(request, ct);
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+
             var query = _db.Tickets.AsQueryable();
 
             // Only show tickets that has quota
@@ -67,19 +78,31 @@ namespace Acceloka.Handlers.CategoryHandler
                 _ => query.OrderBy(t => t.TicketCode) // Default order
             };
 
-            // Show Result
-            var result = await query.Select(t => new
+            const int DEFAULT_PAGE_SIZE = 10;
+            var totalTickets = await query.CountAsync(ct);
+
+            int totalPages = (int)Math.Ceiling((double)totalTickets / DEFAULT_PAGE_SIZE);
+
+            // Show Result with pagination
+            var result = await query
+                .Skip((request.pageNumber - 1) * DEFAULT_PAGE_SIZE)
+                .Take(DEFAULT_PAGE_SIZE)
+                .Select(t => new
+                 {
+                     eventDate = t.EventDate.ToString("dd-MM-yyyy HH:mm"),
+                     quota = t.Quota,
+                     ticketCode = t.TicketCode,
+                     ticketName = t.TicketName,
+                     categoryName = t.CategoryName,
+                     price = t.Price
+                 }).ToListAsync(ct);
+
+            return Results.Ok(new
             {
-                categoryName = t.CategoryName,
-                ticketCode = t.TicketCode,
-                ticketName = t.TicketName,
-                eventDate = t.EventDate.ToString("dd-MM-yyyy HH:mm"),
-                price = t.Price,
-                quota = t.Quota
-            }).ToListAsync(ct);
-
-            return Results.Ok(new { tickets = result });
-
+                tickets = result,
+                totalTickets = totalTickets,
+                pages = $"{request.pageNumber}/{totalPages}" // to show how many pages there is and show the current page
+            });
         }
     }
 }

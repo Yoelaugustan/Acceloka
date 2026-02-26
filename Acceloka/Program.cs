@@ -36,6 +36,15 @@ builder.Services.AddDbContextPool<AccelokaDbContext>(options =>
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 
+// next js 
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowNextJS", policy => {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

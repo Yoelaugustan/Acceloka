@@ -1,4 +1,4 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.Ticket;
 using Acceloka.Entities;
 using FluentValidation;
 using MediatR;
@@ -7,63 +7,71 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Acceloka.Handlers.TicketHandler
 {
-    public class PostTicketHandler : IRequestHandler<TicketCommand, IResult>
+    public class PostTicketHandler : IRequestHandler<PostTicketCommand, IResult>
     {
         private readonly AccelokaDbContext _db;
-        private readonly IValidator<TicketCommand> _validator;
-        public PostTicketHandler(AccelokaDbContext db, IValidator<TicketCommand> validator)
+        private readonly IValidator<PostTicketCommand> _validator;
+        public PostTicketHandler(AccelokaDbContext db, IValidator<PostTicketCommand> validator)
         {
             _db = db;
             _validator = validator;
         }
 
-        public async Task<IResult> Handle(TicketCommand request, CancellationToken ct)
+        public async Task<IResult> Handle(PostTicketCommand request, CancellationToken ct)
         {
-            // Check if ticket code already exists
-            var exist = await _db.Tickets
-                .AnyAsync(t => t.TicketCode == request.Code, ct);
-
-            if (exist)
-            {
-                return Results.Problem(
-                    detail: $"Ticket '{request.Code}' already exists.",
-                    statusCode: StatusCodes.Status400BadRequest,
-                    title: "Validation Error"
-                );
-            }
-
-            // Input Validation
+            // input validation
             var validationResult = await _validator.ValidateAsync(request, ct);
-
             if (!validationResult.IsValid)
             {
                 return Results.ValidationProblem(validationResult.ToDictionary());
             }
 
-            // Insert to DB
-            var newTicket = new Ticket
-            {
-                TicketCode = request.Code,
-                TicketName = request.Name,
-                CategoryName = request.CategoryName,
-                EventDate = request.EventDate,
-                Price = request.Price,
-                Quota = request.Quota
-            };
+            // check if there is an existing ticket
+            var existingTicketCodes = await _db.Tickets
+                .Where(t => request.Tickets.Select(rt => rt.Code).Contains(t.TicketCode))
+                .Select(t => t.TicketCode)
+                .ToListAsync(ct);
 
-            _db.Tickets.Add(newTicket);
+            if (existingTicketCodes.Any())
+            {
+                return Results.Problem(
+                    detail: $"The following ticket codes already exist: {string.Join(", ", existingTicketCodes)}",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Validation Error"
+                );
+            }
+
+            // Add to DB
+            var newTickets = new List<Ticket>();
+            foreach (var ticketInput in request.Tickets)
+            {
+                var newTicket = new Ticket
+                {
+                    TicketCode = ticketInput.Code,
+                    TicketName = ticketInput.Name,
+                    CategoryName = ticketInput.CategoryName,
+                    EventDate = ticketInput.EventDate,
+                    Price = ticketInput.Price,
+                    Quota = ticketInput.Quota
+                };
+                newTickets.Add(newTicket);
+            }
+            
+
+            _db.Tickets.AddRange(newTickets);
             await _db.SaveChangesAsync(ct);
 
-            // Return created ticket
-            return Results.Ok(new
+            var createdTicketsResponse = newTickets.Select(t => new
             {
-                ticketCode = newTicket.TicketCode,
-                ticketName = newTicket.TicketName,
-                categoryName = newTicket.CategoryName,
-                eventDate = newTicket.EventDate.ToString("dd-MM-yyyy HH:mm"),
-                price = newTicket.Price,
-                quota = newTicket.Quota
-            });
+                ticketCode = t.TicketCode,
+                ticketName = t.TicketName,
+                categoryName = t.CategoryName,
+                eventDate = t.EventDate.ToString("dd-MM-yyyy HH:mm"),
+                price = t.Price,
+                quota = t.Quota
+            }).ToList();
+
+            return Results.Ok(createdTicketsResponse);
         }
     }
 }

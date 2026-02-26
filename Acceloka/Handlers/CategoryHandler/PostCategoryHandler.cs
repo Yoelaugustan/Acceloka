@@ -1,4 +1,4 @@
-﻿using Acceloka.Commands;
+﻿using Acceloka.Commands.Category;
 using Acceloka.Entities;
 using FluentValidation;
 using MediatR;
@@ -8,18 +8,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Acceloka.Handlers.CategoryHandler
 {
-    public class PostCategoryHandler : IRequestHandler<CategoryCommand, IResult>
+    public class PostCategoryHandler : IRequestHandler<PostCategoryCommand, IResult>
     {
         private readonly AccelokaDbContext _db;
-        private readonly IValidator<CategoryCommand> _validator;
+        private readonly IValidator<PostCategoryCommand> _validator;
 
-        public PostCategoryHandler(AccelokaDbContext db, IValidator<CategoryCommand> validator)
+        public PostCategoryHandler(AccelokaDbContext db, IValidator<PostCategoryCommand> validator)
         {
             _db = db;
             _validator = validator;
         }
 
-        public async Task<IResult> Handle(CategoryCommand request, CancellationToken ct)
+        public async Task<IResult> Handle(PostCategoryCommand request, CancellationToken ct)
         {
             var exist = await _db.Categories
                 .AnyAsync(c => c.CategoryName == request.Name, ct);

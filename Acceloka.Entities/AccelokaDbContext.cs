@@ -13,34 +13,45 @@ public partial class AccelokaDbContext : DbContext
 
     public virtual DbSet<BookedTicket> BookedTickets { get; set; }
 
+    public virtual DbSet<Booking> Bookings { get; set; }
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Ticket> Tickets { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=AccelokaDb;User id=sa;Pwd=HelloWorld123!;Encrypt=false");
         }
     }
-        
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BookedTicket>(entity =>
         {
-            entity.HasKey(e => e.BookedTicketId).HasName("PK__BookedTi__9110472F614039A4");
+            entity.HasKey(e => e.BookedTicketDetailId).HasName("PK__BookedTi__3C836D9382A8808C");
 
             entity.Property(e => e.TicketCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.BookedTicketNavigation).WithMany(p => p.BookedTickets)
+                .HasForeignKey(d => d.BookedTicketId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_BookedTickets_Bookings");
 
             entity.HasOne(d => d.TicketCodeNavigation).WithMany(p => p.BookedTickets)
                 .HasPrincipalKey(p => p.TicketCode)
                 .HasForeignKey(d => d.TicketCode)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_BookedTickets_Tickets");
+        });
+
+        modelBuilder.Entity<Booking>(entity =>
+        {
+            entity.HasKey(e => e.BookedTicketId).HasName("PK__Bookings__9110472F48D0BF3D");
         });
 
         modelBuilder.Entity<Category>(entity =>
