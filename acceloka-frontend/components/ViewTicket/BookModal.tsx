@@ -30,55 +30,50 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
     <TicketModal onClose={onClose}>
       <div
         className="flex-1 flex flex-col gap-1.5 p-6"
-        style={{ paddingRight: 40 }}
+        style={{ paddingRight: 32 }}
       >
         {/* ticket info */}
-        <span className="text-xl font-bold tracking-wider text-dark-1">
+        <span className="text-lg sm:text-xl font-bold tracking-wider text-dark-1 leading-tight">
           {ticket.ticketName}
         </span>
 
-        <div className="flex items-center gap-1.5 text-xs text-dark-3">
+        <div className="flex flex-wrap items-center gap-1.5 text-[10px] sm:text-xs text-dark-3">
           <span className="font-bold">{ticket.ticketCode}</span>
           <span className="opacity-50">--</span>
           <span>{ticket.categoryName}</span>
         </div>
 
-        <div className="text-xs text-dark-3">{ticket.eventDate}</div>
+        <div className="text-[10px] sm:text-xs text-dark-3">{ticket.eventDate}</div>
 
-        <div className="text-base font-bold text-dark-1 mt-1">
+        <div className="text-sm sm:text-base font-bold text-dark-1 mt-1">
           Rp. {ticket.price.toLocaleString("id-ID")}
           <span className="text-xs font-normal text-dark-4">/ticket</span>
         </div>
 
         <div
-          className={`flex items-center gap-2 text-xs mt-0.5 ${isLow ? "text-error" : "text-dark-3"}`}
+          className={`flex items-center gap-2 text-[10px] sm:text-xs mt-0.5 ${isLow ? "text-error" : "text-dark-3"}`}
         >
           <span>{ticket.quota} tickets left</span>
           {isLow && (
-            <span className="bg-error text-white text-xs font-bold px-1.5 py-0.5 rounded">
+            <span className="bg-error text-white text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded">
               Almost sold out!
             </span>
           )}
         </div>
       </div>
 
-      {/* ticket UI */}
-      <div className="flex flex-col items-center justify-center py-4 self-stretch">
-        <div className="flex-1 border-l-2 border-dashed border-dark-4/50" />
-        <div
-          className="w-5 h-5 rounded-full border-2 border-dark-4 my-1 shrink-0"
-          style={{ background: "#e8e4dc" }}
-        />
-        <div className="flex-1 border-l-2 border-dashed border-dark-4/50" />
+      {/* ticket UI Separator */}
+      <div className="flex sm:flex-col items-center justify-center px-6 sm:px-0 py-0 sm:py-4 self-stretch">
+        <div className="flex-1 border-t-2 sm:border-t-0 sm:border-l-2 border-dashed border-dark-4/50" />
+        <div className="flex-1 border-t-2 sm:border-t-0 sm:border-l-2 border-dashed border-dark-4/50" />
       </div>
 
       {/* input quantity */}
       <div
-        className="flex flex-col justify-center gap-3 px-5 py-6"
-        style={{ width: 180 }}
+        className="flex flex-col justify-center gap-3 px-5 py-6 w-full sm:w-45"
       >
         <div>
-          <label className="text-xs font-bold text-dark-1 tracking-wider uppercase mb-1.5 block">
+          <label className="text-[10px] sm:text-xs font-bold text-dark-1 tracking-wider uppercase mb-1.5 block">
             Quantity
           </label>
           <input
@@ -91,13 +86,13 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
             className="w-full px-3 py-2 rounded-lg text-xs bg-white/50 border border-dark-4 text-dark-1 placeholder-dark-4 outline-none focus:border-primary transition"
           />
           {qty && Number(qty) > ticket.quota && (
-            <p className="text-xs text-error mt-1">Max {ticket.quota}</p>
+            <p className="text-[10px] text-error mt-1">Max {ticket.quota}</p>
           )}
         </div>
 
         {/* show the total cost */}
         {qty && Number(qty) > 0 && (
-          <div className="text-xs text-dark-1 bg-dark-4/10 rounded-lg px-2 py-1.5">
+          <div className="text-[10px] sm:text-xs text-dark-1 bg-dark-4/10 rounded-lg px-2 py-1.5">
             Total:{" "}
             <span className="font-bold">
               Rp. {(Number(qty) * ticket.price).toLocaleString("id-ID")}

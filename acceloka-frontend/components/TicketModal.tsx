@@ -5,10 +5,10 @@ import React from "react";
 
 export function TicketModal({ onClose, children }: TicketModalProps) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
       <div
-        className="relative flex items-stretch rounded-xl border-2 border-yellow-500 shadow-2xl font-mono"
-        style={{ background: "#f5c842", width: 580, overflow: "visible" }}
+        className="relative flex flex-col sm:flex-row items-stretch rounded-xl border-2 border-yellow-500 shadow-2xl font-mono w-full max-w-145 sm:overflow-visible"
+        style={{ background: "#f5c842" }}
       >
         {/* close button */}
         <button

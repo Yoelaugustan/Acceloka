@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import {
   TicketIcon,
-  CaretRightIcon,
   CaretDownIcon,
   ClipboardTextIcon,
   SidebarSimpleIcon,
@@ -73,7 +72,12 @@ export default function Sidebar() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <TicketIcon size={32} weight="fill" className="text-primary" onClick={() => setIsCollapsed(false)}/>
+                <TicketIcon
+                  size={32}
+                  weight="fill"
+                  className="text-primary"
+                  onClick={() => setIsCollapsed(false)}
+                />
                 {!collapsed && (
                   <span
                     className={`text-lg ${isPageActive("/tickets") ? "font-bold" : ""}`}
@@ -82,18 +86,26 @@ export default function Sidebar() {
                   </span>
                 )}
               </div>
-              {!collapsed &&
-                (isTicketsOpen ? (
-                  <CaretDownIcon size={20} />
-                ) : (
-                  <CaretRightIcon size={20} />
-                ))}
+              {!collapsed && (
+                <CaretDownIcon
+                  size={20}
+                  className={`transition-transform duration-300 ${
+                    isTicketsOpen ? "" : "-rotate-90"
+                  }`}
+                />
+              )}
             </button>
           </div>
 
           {/* Ticket Sub menu */}
-          {isTicketsOpen && !collapsed && (
-            <div className="mt-1 flex flex-col bg-[#E0DFD7] transition-all duration-300">
+          <div
+            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+              isTicketsOpen && !collapsed
+                ? "max-h-40 opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+            <div className="mt-1 flex flex-col bg-[#E0DFD7]">
               <Link
                 href="/tickets"
                 onClick={() => setIsMobileOpen(false)}
@@ -117,7 +129,7 @@ export default function Sidebar() {
                 Create Tickets
               </Link>
             </div>
-          )}
+          </div>
 
           {/* Booking Menu Item */}
           <div className="relative">

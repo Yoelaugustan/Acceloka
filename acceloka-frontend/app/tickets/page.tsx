@@ -141,10 +141,10 @@ function ViewTicketsPage() {
           <HamburgerMenu />
           <div>
             {/* header */}
-            <h1 className="text-4xl font-bold text-dark-1 font-heading">
+            <h1 className="text-2xl md:text-4xl font-bold text-dark-1 font-heading">
               Find Your Next Experience
             </h1>
-            <p className="text-dark-3 mt-2">
+            <p className="text-sm md:text-base text-dark-3 mt-2">
               From entertainment to accommodation, secure your spot in just a
               few clicks.
             </p>
@@ -153,7 +153,7 @@ function ViewTicketsPage() {
 
         {/* cart */}
         <div
-          className="relative cursor-pointer"
+          className="relative cursor-pointer shrink-0"
           onClick={() => setIsCartModalOpen(true)}
         >
           <ShoppingCartIcon size={32} weight="fill" className="text-primary" />
@@ -165,74 +165,80 @@ function ViewTicketsPage() {
         </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="flex items-center gap-4 mb-10">
-        <div className="relative flex-1 max-w-2xl">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search for events, hotels, or movie titles..."
-            className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-dark-4 focus:border-primary outline-none transition-all text-dark-1"
-          />
-          <MagnifyingGlassIcon
-            className="absolute left-4 top-3.5 text-dark-4"
-            size={24}
-          />
-        </div>
-
-        {/* date picker */}
-        <div className="flex items-center gap-2 cursor-pointer">
-          <RangePicker
-            variant="filled"
-            suffixIcon={<CalendarDotsIcon size={32} className="text-dark-1" />}
-            placeholder={["Start", "End"]}
-            onChange={(dates) => setDateRange(dates)}
-            className="hover:bg-slate-50 p-1 rounded-md"
-          />
-        </div>
-
-        {/* filter */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 relative">
-            <FunnelIcon
-              size={32}
-              className="cursor-pointer text-dark-1"
-              onClick={() => setIsModalFilterOpen(true)}
+      {/* Search Bar & Filters */}
+      <div className="flex flex-col xl:flex-row xl:items-center gap-4 mb-10">
+        <div className="flex flex-col md:flex-row flex-1 gap-4">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search for events, hotels, or movie titles..."
+              className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-dark-4 focus:border-primary outline-none transition-all text-dark-1"
             />
-            {activeFilterCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-error text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                {activeFilterCount}
-              </span>
-            )}
+            <MagnifyingGlassIcon
+              className="absolute left-4 top-3.5 text-dark-4"
+              size={24}
+            />
           </div>
 
-          {activeFilterCount > 0 && (
-            <button
-              onClick={handleClearFilters}
-              className="text-xs text-error font-bold hover:underline cursor-pointer"
-            >
-              Clear Filters
-            </button>
-          )}
-
-          <span className="text-sm text-dark-3 italic whitespace-nowrap">
-            {activeFilterCount} filters in use
-          </span>
+          {/* date picker */}
+          <div className="flex items-center gap-2 cursor-pointer w-full md:w-auto">
+            <RangePicker
+              variant="filled"
+              suffixIcon={
+                <CalendarDotsIcon size={32} className="text-dark-1" />
+              }
+              placeholder={["Start", "End"]}
+              onChange={(dates) => setDateRange(dates)}
+              className="hover:bg-slate-50 p-1 rounded-md flex-1 md:flex-none"
+            />
+          </div>
         </div>
 
-        <FilterModal
-          isOpen={isModalFilterOpen}
-          onClose={() => setIsModalFilterOpen(false)}
-          onSave={(data) => setFilters(data)}
-          initialFilters={filters}
-        />
+        {/* filter controls */}
+        <div className="flex items-center justify-between xl:justify-start gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 relative">
+              <FunnelIcon
+                size={32}
+                className="cursor-pointer text-dark-1"
+                onClick={() => setIsModalFilterOpen(true)}
+              />
+              {activeFilterCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-error text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  {activeFilterCount}
+                </span>
+              )}
+            </div>
 
-        {/* show total tickets */}
-        <span className="ml-auto font-bold text-dark-1 whitespace-nowrap">
-          {totalTickets} tickets total
-        </span>
+            {activeFilterCount > 0 && (
+              <button
+                onClick={handleClearFilters}
+                className="text-xs text-error font-bold hover:underline cursor-pointer"
+              >
+                Clear Filters
+              </button>
+            )}
+
+            <span className="text-sm text-dark-3 italic whitespace-nowrap">
+              {activeFilterCount} filters
+            </span>
+          </div>
+
+          {/* show total tickets */}
+          <span className="font-bold text-dark-1 whitespace-nowrap">
+            {totalTickets} tickets total
+          </span>
+        </div>
       </div>
+
+      <FilterModal
+        isOpen={isModalFilterOpen}
+        onClose={() => setIsModalFilterOpen(false)}
+        onSave={(data) => setFilters(data)}
+        initialFilters={filters}
+      />
 
       {/* ticket items */}
       <div className="flex-1 overflow-y-auto p-6 pt-2">
@@ -242,7 +248,7 @@ function ViewTicketsPage() {
             <p className="text-center mt-10">Loading...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
             {tickets.map((t) => (
               <TicketCard
                 key={t.ticketCode}

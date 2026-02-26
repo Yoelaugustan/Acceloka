@@ -51,7 +51,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       } else {
         return [
           ...prevCart,
-          { ticketCode, quantity, ticketName, price, categoryName, quota, eventDate },
+          {
+            ticketCode,
+            quantity,
+            ticketName,
+            price,
+            categoryName,
+            quota,
+            eventDate,
+          },
         ];
       }
     });
