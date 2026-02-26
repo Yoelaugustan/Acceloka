@@ -28,32 +28,48 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (ticketCode: string, quantity: number, ticketName: string, price: number, categoryName: string, quota: number) => {
+  const addToCart = (
+    ticketCode: string,
+    quantity: number,
+    ticketName: string,
+    price: number,
+    categoryName: string,
+    quota: number,
+    eventDate: string,
+  ) => {
     setCart((prevCart) => {
       const existingItemIndex = prevCart.findIndex(
-        (item) => item.ticketCode === ticketCode
+        (item) => item.ticketCode === ticketCode,
       );
 
       if (existingItemIndex > -1) {
         const updatedCart = [...prevCart];
         updatedCart[existingItemIndex].quantity += quantity;
         updatedCart[existingItemIndex].quota = quota;
+        updatedCart[existingItemIndex].eventDate = eventDate;
         return updatedCart;
       } else {
-        return [...prevCart, { ticketCode, quantity, ticketName, price, categoryName, quota }];
+        return [
+          ...prevCart,
+          { ticketCode, quantity, ticketName, price, categoryName, quota, eventDate },
+        ];
       }
     });
   };
 
   const removeFromCart = (ticketCode: string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.ticketCode !== ticketCode));
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.ticketCode !== ticketCode),
+    );
   };
 
   const updateCartQuantity = (ticketCode: string, newQuantity: number) => {
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.ticketCode === ticketCode ? { ...item, quantity: newQuantity } : item
-      )
+        item.ticketCode === ticketCode
+          ? { ...item, quantity: newQuantity }
+          : item,
+      ),
     );
   };
 
@@ -62,7 +78,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateCartQuantity, getUniqueItemCount }}>
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateCartQuantity,
+        getUniqueItemCount,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

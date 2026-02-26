@@ -21,6 +21,7 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
       ticket.price,
       ticket.categoryName,
       ticket.quota,
+      ticket.eventDate
     );
     onClose();
   };
@@ -32,29 +33,29 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
         style={{ paddingRight: 40 }}
       >
         {/* ticket info */}
-        <span className="text-xl font-bold tracking-wider text-yellow-950">
+        <span className="text-xl font-bold tracking-wider text-dark-1">
           {ticket.ticketName}
         </span>
 
-        <div className="flex items-center gap-1.5 text-xs text-yellow-900">
+        <div className="flex items-center gap-1.5 text-xs text-dark-3">
           <span className="font-bold">{ticket.ticketCode}</span>
-          <span className="opacity-50">—</span>
+          <span className="opacity-50">--</span>
           <span>{ticket.categoryName}</span>
         </div>
 
-        <div className="text-xs text-yellow-900">{ticket.eventDate}</div>
+        <div className="text-xs text-dark-3">{ticket.eventDate}</div>
 
-        <div className="text-base font-bold text-yellow-950 mt-1">
+        <div className="text-base font-bold text-dark-1 mt-1">
           Rp. {ticket.price.toLocaleString("id-ID")}
-          <span className="text-xs font-normal text-yellow-800">/ticket</span>
+          <span className="text-xs font-normal text-dark-4">/ticket</span>
         </div>
 
         <div
-          className={`flex items-center gap-2 text-xs mt-0.5 ${isLow ? "text-orange-600" : "text-yellow-800"}`}
+          className={`flex items-center gap-2 text-xs mt-0.5 ${isLow ? "text-error" : "text-dark-3"}`}
         >
           <span>{ticket.quota} tickets left</span>
           {isLow && (
-            <span className="bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+            <span className="bg-error text-white text-xs font-bold px-1.5 py-0.5 rounded">
               Almost sold out!
             </span>
           )}
@@ -63,12 +64,12 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
 
       {/* ticket UI */}
       <div className="flex flex-col items-center justify-center py-4 self-stretch">
-        <div className="flex-1 border-l-2 border-dashed border-yellow-600/50" />
+        <div className="flex-1 border-l-2 border-dashed border-dark-4/50" />
         <div
-          className="w-5 h-5 rounded-full border-2 border-yellow-500 my-1 shrink-0"
+          className="w-5 h-5 rounded-full border-2 border-dark-4 my-1 shrink-0"
           style={{ background: "#e8e4dc" }}
         />
-        <div className="flex-1 border-l-2 border-dashed border-yellow-600/50" />
+        <div className="flex-1 border-l-2 border-dashed border-dark-4/50" />
       </div>
 
       {/* input quantity */}
@@ -77,7 +78,7 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
         style={{ width: 180 }}
       >
         <div>
-          <label className="text-xs font-bold text-yellow-950 tracking-wider uppercase mb-1.5 block">
+          <label className="text-xs font-bold text-dark-1 tracking-wider uppercase mb-1.5 block">
             Quantity
           </label>
           <input
@@ -87,16 +88,16 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
             value={qty}
             onChange={(e) => setQty(e.target.value)}
             placeholder="Insert Amount"
-            className="w-full px-3 py-2 rounded-lg text-xs bg-yellow-50 border border-yellow-600/40 text-yellow-950 placeholder-yellow-700/40 outline-none focus:border-yellow-700 transition"
+            className="w-full px-3 py-2 rounded-lg text-xs bg-white/50 border border-dark-4 text-dark-1 placeholder-dark-4 outline-none focus:border-primary transition"
           />
           {qty && Number(qty) > ticket.quota && (
-            <p className="text-xs text-red-600 mt-1">Max {ticket.quota}</p>
+            <p className="text-xs text-error mt-1">Max {ticket.quota}</p>
           )}
         </div>
 
         {/* show the total cost */}
         {qty && Number(qty) > 0 && (
-          <div className="text-xs text-yellow-900 bg-yellow-600/20 rounded-lg px-2 py-1.5">
+          <div className="text-xs text-dark-1 bg-dark-4/10 rounded-lg px-2 py-1.5">
             Total:{" "}
             <span className="font-bold">
               Rp. {(Number(qty) * ticket.price).toLocaleString("id-ID")}
@@ -107,7 +108,7 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
         {/* add to cart button */}
         <button
           onClick={handleSubmit}
-          className="w-full py-2.5 rounded-lg text-white text-xs font-bold tracking-wide shadow-md transition-all duration-200 cursor-pointer bg-stone-800 hover:bg-stone-700 active:scale-95"
+          className="w-full py-2.5 rounded-lg text-white text-xs font-bold tracking-wide shadow-md transition-all duration-200 cursor-pointer bg-dark-1 hover:bg-dark-2 active:scale-95"
         >
           Add to Cart
         </button>

@@ -73,11 +73,12 @@ export interface CartItem {
   price: number;
   categoryName: string;
   quota: number;
+  eventDate: string;
 }
 
 export interface CartContextType {
   cart: CartItem[];
-  addToCart: (ticketCode: string, quantity: number, ticketName: string, price: number, categoryName: string, quota: number) => void;
+  addToCart: (ticketCode: string, quantity: number, ticketName: string, price: number, categoryName: string, quota: number, eventDate: string) => void;
   removeFromCart: (ticketCode: string) => void;
   updateCartQuantity: (ticketCode: string, newQuantity: number) => void;
   getUniqueItemCount: () => number;
@@ -89,5 +90,13 @@ export interface TicketCardProps extends Ticket {
 
 export interface CartModalProps {
   isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface StatusModalProps {
+  isOpen: boolean;
+  type: "success" | "error";
+  title: string;
+  message: string;
   onClose: () => void;
 }
