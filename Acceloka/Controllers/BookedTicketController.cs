@@ -24,6 +24,14 @@ namespace Acceloka.Controllers
             var result = await _mediator.Send(new BookedTicketQuery(BookedTicketId));
             return result;
         }
+
+        [HttpGet("get-bookings")]
+        public async Task<IResult> GetAllBookings()
+        {
+            var result = await _mediator.Send(new GetBookingsQuery());
+            return result;
+        }
+
         // POST api/<BookedTicketController>
         [HttpPost("book-ticket")]
         public async Task<IResult> CreateBookedTicket([FromBody] BookedTicketCommand command)
