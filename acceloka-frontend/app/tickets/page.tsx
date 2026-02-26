@@ -138,10 +138,10 @@ function ViewTicketsPage() {
       <div className="flex justify-between items-start mb-6">
         <div>
           {/* header */}
-          <h1 className="text-4xl font-bold text-[#334155]">
+          <h1 className="text-4xl font-bold text-dark-1 font-heading">
             Find Your Next Experience
           </h1>
-          <p className="text-slate-500 mt-2">
+          <p className="text-dark-3 mt-2">
             From entertainment to accommodation, secure your spot in just a few
             clicks.
           </p>
@@ -152,9 +152,9 @@ function ViewTicketsPage() {
           className="relative cursor-pointer"
           onClick={() => setIsCartModalOpen(true)}
         >
-          <ShoppingCartIcon size={32} weight="fill" color="#958C55" />
+          <ShoppingCartIcon size={32} weight="fill" className="text-primary" />
           {getUniqueItemCount() > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+            <span className="absolute -top-2 -right-2 bg-error text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
               {getUniqueItemCount()}
             </span>
           )}
@@ -169,10 +169,10 @@ function ViewTicketsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search for events, hotels, or movie titles..."
-            className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-[#334155] focus:border-[#958C55] outline-none transition-all text-[#334155]"
+            className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-dark-4 focus:border-primary outline-none transition-all text-dark-1"
           />
           <MagnifyingGlassIcon
-            className="absolute left-4 top-3.5 text-[#334155] opacity-40"
+            className="absolute left-4 top-3.5 text-dark-4"
             size={24}
           />
         </div>
@@ -182,7 +182,7 @@ function ViewTicketsPage() {
           <RangePicker
             variant="filled"
             suffixIcon={
-              <CalendarDotsIcon size={32} className="text-[#334155]" />
+              <CalendarDotsIcon size={32} className="text-dark-1" />
             }
             placeholder={["Start", "End"]}
             onChange={(dates) => setDateRange(dates)}
@@ -195,11 +195,11 @@ function ViewTicketsPage() {
           <div className="flex items-center gap-2 relative">
             <FunnelIcon
               size={32}
-              className="cursor-pointer text-[#334155]"
+              className="cursor-pointer text-dark-1"
               onClick={() => setIsModalFilterOpen(true)}
             />
             {activeFilterCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+              <span className="absolute -top-2 -right-2 bg-error text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
                 {activeFilterCount}
               </span>
             )}
@@ -208,13 +208,13 @@ function ViewTicketsPage() {
           {activeFilterCount > 0 && (
             <button
               onClick={handleClearFilters}
-              className="text-xs text-red-500 font-bold hover:underline cursor-pointer"
+              className="text-xs text-error font-bold hover:underline cursor-pointer"
             >
               Clear Filters
             </button>
           )}
 
-          <span className="text-sm text-slate-500 italic whitespace-nowrap">
+          <span className="text-sm text-dark-3 italic whitespace-nowrap">
             {activeFilterCount} filters in use
           </span>
         </div>
@@ -227,7 +227,7 @@ function ViewTicketsPage() {
         />
 
         {/* show total tickets */}
-        <span className="ml-auto font-bold text-[#334155] whitespace-nowrap">
+        <span className="ml-auto font-bold text-dark-1 whitespace-nowrap">
           {totalTickets} tickets total
         </span>
       </div>
@@ -257,19 +257,19 @@ function ViewTicketsPage() {
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
-          className="px-4 py-2 bg-[#958C55] text-white rounded-lg disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-50 cursor-pointer"
         >
           previous
         </button>
 
-        <span className="font-mono font-bold text-yellow-950">
+        <span className="font-mono font-bold text-dark-1">
           Page {page} of {totalPages}
         </span>
 
         <button
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
-          className="px-4 py-2 bg-[#958C55] text-white rounded-lg disabled:opacity-50 cursor-pointer"
+          className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-50 cursor-pointer"
         >
           next
         </button>

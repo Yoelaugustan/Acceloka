@@ -27,7 +27,7 @@ export default function Sidebar() {
     >
       {/* Current Page Indicator */}
       {!isCollapsed && isPageActive("/tickets") && (
-        <div className="absolute left-0 top-33 w-1.5 h-12 bg-[#958C55] rounded-r-full" />
+        <div className="absolute left-0 top-33 w-1.5 h-12 bg-primary rounded-r-full" />
       )}
 
       {/* Logo Section */}
@@ -44,12 +44,12 @@ export default function Sidebar() {
       <nav className="flex-1 space-y-7">
         <button
           onClick={() => !isCollapsed && setIsTicketsOpen(!isTicketsOpen)}
-          className={`flex w-full items-center text-[#958C55] cursor-pointer ${
+          className={`flex w-full items-center text-primary cursor-pointer ${
             isCollapsed ? "justify-center" : "justify-between px-7"
           }`}
         >
           <div className="flex items-center gap-3">
-            <TicketIcon size={32} weight="fill" color="#958C55" />
+            <TicketIcon size={32} weight="fill" className="text-primary" />
             {!isCollapsed && (
               <span
                 className={`text-lg ${isPageActive("/tickets") ? "font-bold" : ""}`}
@@ -73,15 +73,15 @@ export default function Sidebar() {
               href="/tickets"
               className={`m-2 p-2 px-6 rounded-full transition-all ${
                 isPageActive("/tickets")
-                  ? "bg-white text-[#958C55] font-bold shadow-sm"
-                  : "text-[#958C55] hover:bg-white/50"
+                  ? "bg-white text-primary font-bold shadow-sm"
+                  : "text-primary hover:bg-white/50"
               }`}
             >
               View Tickets
             </Link>
             <Link
               href="/tickets/create"
-              className="m-2 p-2 px-6 text-[#958C55] hover:bg-white/50 rounded-full"
+              className="m-2 p-2 px-6 text-primary hover:bg-white/50 rounded-full"
             >
               Create Tickets
             </Link>
@@ -90,7 +90,7 @@ export default function Sidebar() {
 
         <Link
           href="/booking"
-          className={`flex items-center text-[#958C55] ${isCollapsed ? "justify-center" : "gap-3 px-7"}`}
+          className={`flex items-center text-primary ${isCollapsed ? "justify-center" : "gap-3 px-7"}`}
         >
           <ClipboardTextIcon size={32} weight="fill" />
           {!isCollapsed && <span className="text-lg">Booking</span>}
@@ -105,7 +105,7 @@ export default function Sidebar() {
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-2 hover:bg-black/5 rounded-lg"
         >
-          <SidebarSimpleIcon size={32} weight="fill" color="#958C55" />
+          <SidebarSimpleIcon size={32} weight="fill" className="text-primary" />
         </button>
       </div>
     </div>

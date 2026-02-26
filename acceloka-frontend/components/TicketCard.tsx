@@ -55,40 +55,40 @@ export default function TicketCard(props: TicketCardProps) {
       />
 
       <div
-        className="flex-1 flex flex-col gap-1.5 p-5"
+        className="flex-1 flex flex-col gap-1.5 p-4"
         style={{ paddingRight: 48 }}
       >
         {/* ticket name */}
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-lg font-bold font-mono tracking-wider text-yellow-950">
+          <span className="text-lg font-bold font-mono tracking-wider text-dark-1">
             {ticketName}
           </span>
         </div>
 
         {/* ticket code and category */}
-        <div className="flex items-center gap-1.5 text-xs text-yellow-900">
+        <div className="flex items-center gap-1.5 text-xs text-dark-3">
           <span className="font-bold">{ticketCode}</span>
-          <span className="opacity-50">—</span>
+          <span className="opacity-50">--</span>
           <span>{categoryName}</span>
         </div>
 
         {/* ticket date */}
-        <div className="text-xs text-yellow-900">{eventDate}</div>
+        <div className="text-xs text-dark-3">{eventDate}</div>
 
         {/* ticket price */}
-        <div className="text-base font-bold text-yellow-950 mt-1">
+        <div className="text-base font-bold text-dark-1 mt-1">
           Rp. {price.toLocaleString("id-ID")}
         </div>
 
         {/* ticket quota */}
         <div
           className={`flex items-center gap-2 text-xs mt-0.5 ${
-            isLow ? "text-orange-600" : "text-yellow-800"
+            isLow ? "text-error" : "text-dark-2"
           }`}
         >
           <span>{quota} tickets left</span>
           {isLow && (
-            <span className="bg-orange-500 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+            <span className="bg-error text-white text-xs font-bold px-1.5 py-0.5 rounded">
               Almost sold out!
             </span>
           )}
@@ -102,10 +102,10 @@ export default function TicketCard(props: TicketCardProps) {
       >
         <button
           onClick={handleAddClick}
-          className={`w-full py-2.5 px-3 rounded-lg text-white text-xs font-bold tracking-wide shadow-md transition-all duration-300 cursor-pointer ${
+          className={`w-full py-2.5 px-3 rounded-lg text-xs font-bold tracking-wide shadow-md transition-all duration-300 cursor-pointer ${
             isAddedToCart
-              ? "bg-green-700"
-              : "bg-stone-800 hover:bg-stone-700 active:scale-95"
+              ? "bg-success text-dark-1"
+              : "bg-dark-1 hover:bg-dark-2 active:scale-95 text-white"
           }`}
           disabled={isAddedToCart}
         >
