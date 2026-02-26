@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { BookingTicket } from "@/components/Booking/BookingTicket";
 import BookingDetailModal from "@/components/Booking/BookingDetailModal";
+import RevokeModal from "@/components/Booking/RevokeModal";
 import { BookingSummary, BookingListResponse } from "@/types/api";
 import HamburgerMenu from "@/components/Sidebar/HamburgerMenu";
 
@@ -13,33 +14,33 @@ export default function BookingsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalBookings, setTotalBookings] = useState(0);
 
-  // Modal States
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [isRevokeOpen, setIsRevokeOpen] = useState(false);
+
+  const fetchBookings = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5224/api/v1/get-bookings?pageNumber=${page}`,
+      );
+      const data: BookingListResponse = await response.json();
+
+      setBookings(data.bookings || []);
+      setTotalBookings(data.totalBookings || 0);
+
+      if (data.pages) {
+        const total = parseInt(data.pages.split("/")[1]);
+        setTotalPages(total);
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `http://localhost:5224/api/v1/get-bookings?pageNumber=${page}`,
-        );
-        const data: BookingListResponse = await response.json();
-
-        setBookings(data.bookings || []);
-        setTotalBookings(data.totalBookings || 0);
-
-        if (data.pages) {
-          const total = parseInt(data.pages.split("/")[1]);
-          setTotalPages(total);
-        }
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchBookings();
   }, [page]);
 
@@ -50,10 +51,12 @@ export default function BookingsPage() {
         <div className="flex items-start">
           <HamburgerMenu />
           <div>
-            <h1 className="text-4xl font-bold text-dark-1 font-heading">
+            <h1 className="text-2xl md:text-4xl font-bold text-dark-1 font-heading">
               Your Acceloka Itinerary
             </h1>
-            <p className="text-dark-3 mt-2">Manage your selected experiences</p>
+            <p className="text-sm md:text-base text-dark-3 mt-2">
+              Manage your selected experiences
+            </p>
           </div>
         </div>
       </div>
@@ -86,6 +89,10 @@ export default function BookingsPage() {
                   setSelectedId(id);
                   setIsDetailOpen(true);
                 }}
+                onRevoke={(id: number) => {
+                  setSelectedId(id);
+                  setIsRevokeOpen(true);
+                }}
               />
             ))}
           </div>
@@ -96,6 +103,13 @@ export default function BookingsPage() {
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
         bookedTicketId={selectedId}
+      />
+
+      <RevokeModal
+        isOpen={isRevokeOpen}
+        onClose={() => setIsRevokeOpen(false)}
+        bookedTicketId={selectedId}
+        onSuccess={fetchBookings}
       />
 
       {/* pagination */}

@@ -88,9 +88,18 @@ export interface BookingDetailModalProps {
   onClose: () => void;
   bookedTicketId: number | null;
 }
+
+export interface RevokeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  bookedTicketId: number | null;
+  onSuccess: () => void;
+}
+
 export interface BookingTicketProps {
   booking: BookingSummary;
   onViewDetails: (id: number) => void;
+  onRevoke: (id: number) => void;
 }
 
 export interface BookingSummary {

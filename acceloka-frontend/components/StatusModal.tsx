@@ -33,18 +33,16 @@ export function StatusModal({
           <XCircleIcon size={80} weight="fill" className="text-error" />
         )}
 
-        <h2 className="text-2xl font-bold text-dark-1 font-heading">
-          {title}
-        </h2>
-        
-        <p className="text-dark-3 font-body">
-          {message}
-        </p>
+        <h2 className="text-2xl font-bold text-dark-1 font-heading">{title}</h2>
+
+        <p className="text-dark-3 font-body">{message}</p>
 
         <button
           onClick={onClose}
           className={`mt-6 px-8 py-2 rounded-full font-bold text-white transition-all active:scale-95 cursor-pointer ${
-            isSuccess ? "bg-success hover:opacity-90" : "bg-error hover:opacity-90"
+            isSuccess
+              ? "bg-success hover:opacity-90"
+              : "bg-error hover:opacity-90"
           }`}
         >
           {isSuccess ? "Great!" : "Try Again"}

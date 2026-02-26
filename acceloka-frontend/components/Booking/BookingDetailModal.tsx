@@ -46,9 +46,7 @@ export default function BookingDetailModal({
           const qtys: { [key: string]: number } = {};
           const quotas: { [key: string]: number } = {};
           data.forEach((cat) => {
-            // Type cat
             cat.tickets.forEach((t) => {
-              // Type t
               qtys[t.ticketCode] = t.quantity;
               quotas[t.ticketCode] = t.quota;
             });
