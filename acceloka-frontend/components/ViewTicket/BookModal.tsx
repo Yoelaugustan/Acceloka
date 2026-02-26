@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { BookModalProps, Ticket } from "@/types/api";
-import { TicketModal } from "./TicketModal";
-import { useCart } from "../context/CartContext";
+import { TicketModal } from "../TicketModal";
+import { useCart } from "../../context/CartContext";
 
 export function BookModal({ ticket, onClose }: BookModalProps) {
   const [qty, setQty] = useState<string>("");
@@ -21,7 +21,7 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
       ticket.price,
       ticket.categoryName,
       ticket.quota,
-      ticket.eventDate
+      ticket.eventDate,
     );
     onClose();
   };

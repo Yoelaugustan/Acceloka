@@ -1,3 +1,8 @@
+export interface SidebarContextType {
+  isMobileOpen: boolean;
+  setIsMobileOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
+}
 export interface Category {
   categoryName: string;
 }

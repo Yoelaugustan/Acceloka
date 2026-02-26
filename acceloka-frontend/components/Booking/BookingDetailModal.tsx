@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { PencilSimpleIcon, CheckCircleIcon } from "@phosphor-icons/react";
-import { StatusModal } from "./StatusModal";
+import { StatusModal } from "../StatusModal";
 import {
   BookedTicketCategoryDetail,
   BookedTicketItem,

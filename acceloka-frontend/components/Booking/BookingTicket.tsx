@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { BookingSummary, BookingTicketProps } from "@/types/api";
+import { BookingTicketProps } from "@/types/api";
 
 export function BookingTicket({ booking, onViewDetails }: BookingTicketProps) {
   return (
     <div className="relative group w-full">
       {/* ticket ui */}
-      <div className="absolute top-2 left-2 w-full h-full bg-dark-4/20 rounded-xl border-2 border-dark-4/30 translate-x-1 translate-y-1" />
-      <div className="absolute top-1 left-1 w-full h-full bg-dark-4/40 rounded-xl border-2 border-dark-4/40" />
+      <div className="absolute top-2 left-2 w-full h-full bg-[#f5c842]/50 rounded-xl border-2 border-dark-4/30 translate-x-1 translate-y-1" />
+      <div className="absolute top-1 left-1 w-full h-full bg-[#f5c842]/90 rounded-xl border-2 border-dark-4/40" />
 
-      <div className="relative flex items-stretch w-full rounded-xl border-2 border-yellow-500 bg-[#f5c842] shadow-md min-h-[140px] font-mono">
+      <div className="relative flex items-stretch w-full rounded-xl border-2 border-yellow-500 bg-[#f5c842] shadow-md min-h-35 font-mono">
         
         <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-6 h-6 bg-white border-2 border-yellow-500 rounded-full z-10" />
 

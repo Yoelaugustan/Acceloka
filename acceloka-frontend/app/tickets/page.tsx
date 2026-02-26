@@ -1,9 +1,9 @@
 "use client";
 
-import FilterModal from "@/components/FilterModel";
-import TicketCard from "@/components/TicketCard";
-import { BookModal } from "@/components/BookModal";
-import { CartModal } from "@/components/CartModal";
+import FilterModal from "@/components/ViewTicket/FilterModel";
+import TicketCard from "@/components/ViewTicket/TicketCard";
+import { BookModal } from "@/components/ViewTicket/BookModal";
+import { CartModal } from "@/components/ViewTicket/CartModal";
 import { CartProvider, useCart } from "@/context/CartContext";
 import { FilterData, Ticket } from "@/types/api";
 import {
@@ -13,8 +13,9 @@ import {
   ShoppingCartIcon,
 } from "@phosphor-icons/react";
 import { DatePicker } from "antd";
-import { Dayjs } from "dayjs";
-import { useEffect, useMemo, useState } from "react";
+import type { Dayjs } from "dayjs";
+import HamburgerMenu from "@/components/Sidebar/HamburgerMenu";
+import { useMemo, useState, useEffect } from "react";
 
 const { RangePicker } = DatePicker;
 
@@ -136,15 +137,18 @@ function ViewTicketsPage() {
     <div className="p-6 flex flex-col h-full bg-white">
       {/* Header Section */}
       <div className="flex justify-between items-start mb-6">
-        <div>
-          {/* header */}
-          <h1 className="text-4xl font-bold text-dark-1 font-heading">
-            Find Your Next Experience
-          </h1>
-          <p className="text-dark-3 mt-2">
-            From entertainment to accommodation, secure your spot in just a few
-            clicks.
-          </p>
+        <div className="flex items-start">
+          <HamburgerMenu />
+          <div>
+            {/* header */}
+            <h1 className="text-4xl font-bold text-dark-1 font-heading">
+              Find Your Next Experience
+            </h1>
+            <p className="text-dark-3 mt-2">
+              From entertainment to accommodation, secure your spot in just a
+              few clicks.
+            </p>
+          </div>
         </div>
 
         {/* cart */}
@@ -181,9 +185,7 @@ function ViewTicketsPage() {
         <div className="flex items-center gap-2 cursor-pointer">
           <RangePicker
             variant="filled"
-            suffixIcon={
-              <CalendarDotsIcon size={32} className="text-dark-1" />
-            }
+            suffixIcon={<CalendarDotsIcon size={32} className="text-dark-1" />}
             placeholder={["Start", "End"]}
             onChange={(dates) => setDateRange(dates)}
             className="hover:bg-slate-50 p-1 rounded-md"

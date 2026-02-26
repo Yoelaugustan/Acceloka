@@ -50,9 +50,7 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
             {ticketName || "New Ticket"}
           </span>
           {categoryName && (
-            <span
-              className="text-[10px] font-bold tracking-widest px-2 py-0.5 rounded text-white bg-dark-1"
-            >
+            <span className="text-[10px] font-bold tracking-widest px-2 py-0.5 rounded text-white bg-dark-1">
               {categoryName}
             </span>
           )}

@@ -2,14 +2,14 @@
 
 import React, { useMemo, useState } from "react"; // Import useState for loading state
 import { Modal } from "antd";
-import { useCart, CartItem } from "../context/CartContext";
+import { useCart, CartItem } from "../../context/CartContext";
 import {
   MinusCircleIcon,
   PlusCircleIcon,
   TrashIcon,
 } from "@phosphor-icons/react";
 import { CartModalProps } from "@/types/api";
-import { StatusModal } from "./StatusModal";
+import { StatusModal } from "../StatusModal";
 
 export function CartModal({ isOpen, onClose }: CartModalProps) {
   const { cart, removeFromCart, updateCartQuantity } = useCart();
@@ -77,7 +77,10 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
           isOpen: true,
           type: "error",
           title: "Booking Failed",
-          message: errorData.title || errorData.detail || "Something went wrong. Please try again.",
+          message:
+            errorData.title ||
+            errorData.detail ||
+            "Something went wrong. Please try again.",
         });
       }
     } catch (error) {
@@ -200,7 +203,8 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
                         </button>
                       </div>
                       <p className="font-bold text-dark-1 text-lg">
-                        Rp. {(item.quantity * item.price).toLocaleString("id-ID")}
+                        Rp.{" "}
+                        {(item.quantity * item.price).toLocaleString("id-ID")}
                       </p>
                       <div
                         onClick={() => removeFromCart(item.ticketCode)}

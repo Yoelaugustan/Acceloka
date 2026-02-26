@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { BookingTicket } from "@/components/BookingTicket";
-import BookingDetailModal from "@/components/BookingDetailModal";
+import { BookingTicket } from "@/components/Booking/BookingTicket";
+import BookingDetailModal from "@/components/Booking/BookingDetailModal";
 import { BookingSummary, BookingListResponse } from "@/types/api";
+import HamburgerMenu from "@/components/Sidebar/HamburgerMenu";
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<BookingSummary[]>([]);
@@ -46,11 +47,14 @@ export default function BookingsPage() {
     <div className="p-6 flex flex-col h-full bg-white">
       {/* header */}
       <div className="flex justify-between items-start mb-6">
-        <div>
-          <h1 className="text-4xl font-bold text-dark-1 font-heading">
-            Your Acceloka Itinerary
-          </h1>
-          <p className="text-dark-3 mt-2">Manage your selected experiences</p>
+        <div className="flex items-start">
+          <HamburgerMenu />
+          <div>
+            <h1 className="text-4xl font-bold text-dark-1 font-heading">
+              Your Acceloka Itinerary
+            </h1>
+            <p className="text-dark-3 mt-2">Manage your selected experiences</p>
+          </div>
         </div>
       </div>
 
@@ -75,9 +79,9 @@ export default function BookingsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 p-2">
             {bookings.map((booking) => (
-              <BookingTicket 
-                key={booking.bookedTicketId} 
-                booking={booking} 
+              <BookingTicket
+                key={booking.bookedTicketId}
+                booking={booking}
                 onViewDetails={(id: number) => {
                   setSelectedId(id);
                   setIsDetailOpen(true);
@@ -88,13 +92,13 @@ export default function BookingsPage() {
         )}
       </div>
 
-      <BookingDetailModal 
+      <BookingDetailModal
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
         bookedTicketId={selectedId}
       />
 
-      {/* pagination  */}
+      {/* pagination */}
       <div className="pt-6 bg-white flex justify-center items-center gap-4">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
