@@ -26,9 +26,9 @@ namespace Acceloka.Controllers
         }
 
         [HttpGet("get-bookings")]
-        public async Task<IResult> GetAllBookings()
+        public async Task<IResult> GetAllBookings([FromQuery] int pageNumber = 1)
         {
-            var result = await _mediator.Send(new GetBookingsQuery());
+            var result = await _mediator.Send(new GetBookingsQuery(pageNumber));
             return result;
         }
 

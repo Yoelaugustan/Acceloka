@@ -2,5 +2,5 @@ using MediatR;
 
 namespace Acceloka.Queries
 {
-    public record GetBookingsQuery : IRequest<IResult>;
+    public record GetBookingsQuery(int PageNumber = 1) : IRequest<IResult>;
 }

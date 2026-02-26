@@ -16,10 +16,18 @@ namespace Acceloka.Handlers.BookedTicketHandler
 
         public async Task<IResult> Handle(GetBookingsQuery request, CancellationToken ct)
         {
-            var bookings = await _db.Bookings
+            const int DEFAULT_PAGE_SIZE = 10;
+            var query = _db.Bookings.AsQueryable();
+
+            var totalBookings = await query.CountAsync(ct);
+            int totalPages = (int)Math.Ceiling((double)totalBookings / DEFAULT_PAGE_SIZE);
+
+            var bookings = await query
                 .Include(b => b.BookedTickets)
                     .ThenInclude(bt => bt.TicketCodeNavigation)
                 .OrderByDescending(b => b.BookedTicketId)
+                .Skip((request.PageNumber - 1) * DEFAULT_PAGE_SIZE)
+                .Take(DEFAULT_PAGE_SIZE)
                 .ToListAsync(ct);
 
             var result = bookings.Select(b => new
@@ -29,7 +37,12 @@ namespace Acceloka.Handlers.BookedTicketHandler
                 totalPrice = b.BookedTickets.Sum(bt => bt.Quantity * bt.TicketCodeNavigation.Price)
             });
 
-            return Results.Ok(result);
+            return Results.Ok(new
+            {
+                bookings = result,
+                totalBookings = totalBookings,
+                pages = $"{request.PageNumber}/{totalPages}"
+            });
         }
     }
 }
