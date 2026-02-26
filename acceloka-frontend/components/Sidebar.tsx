@@ -17,7 +17,8 @@ export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
-  const isPageActive = (path: string) => pathname === path || pathname.startsWith(path + "/");
+  const isPageActive = (path: string) =>
+    pathname === path || pathname.startsWith(path + "/");
   const isExactActive = (path: string) => pathname === path;
 
   return (
