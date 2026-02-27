@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import HamburgerMenu from "@/components/Sidebar/HamburgerMenu";
 import { PlusCircleIcon } from "@phosphor-icons/react";
 import { Ticket, TicketListResponse } from "@/types/api";
-import { CreateModal } from "@/components/CreateModal";
+import { CreateModal } from "@/components/Create/CreateModal";
 import { StatusModal } from "@/components/StatusModal";
 import { CreateTicketCard } from "@/components/Create/CreateTicketCard";
 import { DeleteConfirmModal } from "@/components/Create/DeleteConfirmModal";
