@@ -6,7 +6,7 @@ import { PlusCircleIcon } from "@phosphor-icons/react";
 import { Ticket, TicketListResponse } from "@/types/api";
 import { CreateModal } from "@/components/CreateModal";
 import { StatusModal } from "@/components/StatusModal";
-import { ManageTicketCard } from "@/components/Create/ManageTicketCard";
+import { CreateTicketCard } from "@/components/Create/CreateTicketCard";
 import { DeleteConfirmModal } from "@/components/Create/DeleteConfirmModal";
 
 export default function ManageTicketsPage() {
@@ -129,7 +129,7 @@ export default function ManageTicketsPage() {
             {page === 1 && (
               <div
                 onClick={() => setIsCreateModalOpen(true)}
-                className="relative flex items-center justify-center w-full max-w-[384px] h-40 my-4 rounded-xl border-2 border-dashed border-dark-4/30 bg-dark-4/5 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group"
+                className="relative flex items-center justify-center w-full max-w-[384px] h-45 my-4 rounded-xl border-2 border-dashed border-dark-4/30 bg-dark-4/5 hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group"
               >
                 <div className="flex flex-col items-center">
                   <PlusCircleIcon
@@ -146,7 +146,7 @@ export default function ManageTicketsPage() {
 
             {/* ticket items */}
             {tickets.map((ticket) => (
-              <ManageTicketCard
+              <CreateTicketCard
                 key={ticket.ticketCode}
                 ticket={ticket}
                 onDelete={() => confirmDelete(ticket.ticketCode)}
