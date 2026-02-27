@@ -25,10 +25,8 @@ export default function BookingsPage() {
         `http://localhost:5224/api/v1/get-bookings?pageNumber=${page}`,
       );
       const data: BookingListResponse = await response.json();
-
       setBookings(data.bookings || []);
       setTotalBookings(data.totalBookings || 0);
-
       if (data.pages) {
         const total = parseInt(data.pages.split("/")[1]);
         setTotalPages(total);
@@ -45,30 +43,28 @@ export default function BookingsPage() {
   }, [page]);
 
   return (
-    <div className="p-6 flex flex-col h-full bg-white">
+    <div className="p-4 sm:p-6 flex flex-col h-full bg-white">
       {/* header */}
-      <div className="flex justify-between items-start mb-6">
-        <div className="flex items-start">
-          <HamburgerMenu />
-          <div>
-            <h1 className="text-2xl md:text-4xl font-bold text-dark-1 font-heading">
-              Your Acceloka Itinerary
-            </h1>
-            <p className="text-sm md:text-base text-dark-3 mt-2">
-              Manage your selected experiences
-            </p>
-          </div>
+      <div className="flex items-start gap-2 mb-4 sm:mb-6">
+        <HamburgerMenu />
+        <div>
+          <h1 className="text-2xl md:text-4xl font-bold text-dark-1 font-heading">
+            Your Acceloka Itinerary
+          </h1>
+          <p className="text-sm md:text-base text-dark-3 mt-2">
+            Manage your selected experiences
+          </p>
         </div>
       </div>
 
-      <div className="mb-6 flex items-center justify-between">
-        <span className="text-sm font-bold text-dark-1 whitespace-nowrap">
+      <div className="mb-4 sm:mb-6">
+        <span className="text-sm font-bold text-dark-1">
           {totalBookings} Bookings Total
         </span>
       </div>
 
       {/* booking items */}
-      <div className="flex-1 overflow-y-auto pr-2">
+      <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="flex justify-center mt-20">
             <p className="animate-pulse font-bold text-dark-3">
@@ -76,11 +72,11 @@ export default function BookingsPage() {
             </p>
           </div>
         ) : bookings.length === 0 ? (
-          <div className="flex justify-center mt-20 text-dark-3 font-bold">
+          <div className="flex justify-center mt-20 text-dark-3 font-bold text-center px-4">
             No bookings found yet. Go explore some tickets!
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 p-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-10 px-4 py-2">
             {bookings.map((booking) => (
               <BookingTicket
                 key={booking.bookedTicketId}
@@ -104,7 +100,6 @@ export default function BookingsPage() {
         onClose={() => setIsDetailOpen(false)}
         bookedTicketId={selectedId}
       />
-
       <RevokeModal
         isOpen={isRevokeOpen}
         onClose={() => setIsRevokeOpen(false)}
@@ -113,7 +108,7 @@ export default function BookingsPage() {
       />
 
       {/* pagination */}
-      <div className="pt-6 bg-white flex justify-center items-center gap-4">
+      <div className="pt-4 sm:pt-6 bg-white flex justify-center items-center gap-4">
         <button
           onClick={() => setPage((p) => Math.max(1, p - 1))}
           disabled={page === 1}
@@ -121,11 +116,9 @@ export default function BookingsPage() {
         >
           previous
         </button>
-
         <span className="font-mono font-bold text-dark-1">
           Page {page} of {totalPages}
         </span>
-
         <button
           onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
           disabled={page === totalPages}
