@@ -267,7 +267,7 @@ function ViewTicketsPage() {
           disabled={page === 1}
           className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-50 cursor-pointer"
         >
-          previous
+          prev  
         </button>
 
         <span className="font-mono font-bold text-dark-1">

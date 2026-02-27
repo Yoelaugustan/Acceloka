@@ -127,3 +127,17 @@ export interface BookedTicketCategoryDetail {
   categoryName: string;
   tickets: BookedTicketItem[];
 }
+
+export interface StatusModalProps {
+  isOpen: boolean;
+  type: "success" | "error";
+  title: string;
+  message: string;
+  onClose: () => void;
+}
+export interface DeleteConfirmModalProps {
+  isOpen: boolean;
+  ticketCode: string | null;
+  onCancel: () => void;
+  onConfirm: () => void;
+}
