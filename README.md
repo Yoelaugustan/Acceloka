@@ -30,8 +30,15 @@ Open `Acceloka/appsettings.json` and update the `ConnectionStrings:SQLServerDB` 
   dotnet build
 ```
 
-## Running the Application
+## Running the Backend
 ```bash
   cd Acceloka
   dotnet run
+```
+
+### 3. Run Frontend
+```bash
+cd acceloka-frontend
+npm install
+npm run dev
 ```
