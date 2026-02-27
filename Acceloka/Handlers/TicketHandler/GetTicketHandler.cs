@@ -75,7 +75,8 @@ namespace Acceloka.Handlers.CategoryHandler
                 "ticketname" => isDesc ? query.OrderByDescending(t => t.TicketName) : query.OrderBy(t => t.TicketName),
                 "price" => isDesc ? query.OrderByDescending(t => t.Price) : query.OrderBy(t => t.Price),
                 "eventdate" => isDesc ? query.OrderByDescending(t => t.EventDate) : query.OrderBy(t => t.EventDate),
-                _ => query.OrderBy(t => t.TicketCode) // Default order
+                "ticketcode" => isDesc ? query.OrderByDescending(t => t.TicketCode) : query.OrderBy(t => t.TicketCode),
+                _ => isDesc ? query.OrderByDescending(t => t.TicketCode) : query.OrderBy(t => t.TicketCode) // Default order
             };
 
             const int DEFAULT_PAGE_SIZE = 10;

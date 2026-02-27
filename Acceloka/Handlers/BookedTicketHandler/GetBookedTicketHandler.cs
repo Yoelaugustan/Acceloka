@@ -1,4 +1,4 @@
-﻿using Acceloka.Commands;
+using Acceloka.Commands;
 using Acceloka.Entities;
 using Acceloka.Queries;
 using FluentValidation;
@@ -57,6 +57,8 @@ namespace Acceloka.Handlers.BookedTicketHandler
                         ticketCode = t.TicketCode,
                         ticketName = t.TicketCodeNavigation.TicketName,
                         eventDate = t.TicketCodeNavigation.EventDate.ToString("dd-MM-yyyy HH:mm"),
+                        quantity = t.Quantity,
+                        quota = t.TicketCodeNavigation.Quota
                     }).ToList()
                 }).ToList();
 
