@@ -43,7 +43,9 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
   }, []);
 
   const handleAddCategory = async () => {
-    if (!newCategoryName) return;
+    if (!newCategoryName) {
+      return;
+    }
     try {
       const res = await fetch("http://localhost:5224/api/v1/insert-category", {
         method: "POST",

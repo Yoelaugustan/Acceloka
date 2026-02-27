@@ -59,9 +59,15 @@ function ViewTicketsPage() {
   // count the filters used
   const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (filters.category) count++;
-    if (filters.priceRange) count++;
-    if (dateRange) count++;
+    if (filters.category) {
+      count++;
+    }
+    if (filters.priceRange) {
+      count++;
+    }
+    if (dateRange) {
+      count++;
+    }
     return count;
   }, [filters, dateRange]);
 

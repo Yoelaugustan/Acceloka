@@ -12,7 +12,9 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
 
   const handleSubmit = (): void => {
     const quantityNum = Number(qty);
-    if (!qty || quantityNum < 1 || quantityNum > ticket.quota) return;
+    if (!qty || quantityNum < 1 || quantityNum > ticket.quota) {
+      return;
+    }
 
     addToCart(
       ticket.ticketCode,

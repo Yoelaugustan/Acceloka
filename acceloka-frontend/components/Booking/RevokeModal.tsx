@@ -25,31 +25,46 @@ export default function RevokeModal({
   }>({ isOpen: false, type: "success", title: "", message: "" });
 
   // fetch booking details
-  const fetchDetails = () => {
+  const fetchDetails = async () => {
     if (bookedTicketId !== null) {
       setLoading(true);
-      fetch(`http://localhost:5224/api/v1/get-booked-ticket/${bookedTicketId}`)
-        .then((res) => res.json())
-        .then((data: BookedTicketCategoryDetail[]) => {
-          setDetails(data);
-          const initialQtys: { [key: string]: number } = {};
-          data.forEach((cat) => {
-            cat.tickets.forEach((t) => { initialQtys[t.ticketCode] = 1; });
+      try {
+        const response = await fetch(`http://localhost:5224/api/v1/get-booked-ticket/${bookedTicketId}`);
+        const data: BookedTicketCategoryDetail[] = await response.json();
+        
+        setDetails(data);
+        const initialQtys: { [key: string]: number } = {};
+        data.forEach((cat) => {
+          cat.tickets.forEach((t) => { 
+            initialQtys[t.ticketCode] = 1; 
           });
-          setRevokeQuantities(initialQtys);
-          setLoading(false);
-          if (data.length === 0) { onSuccess(); onClose(); }
-        })
-        .catch((err) => { console.error(err); setLoading(false); });
+        });
+        setRevokeQuantities(initialQtys);
+        
+        if (data.length === 0) { 
+          onSuccess(); 
+          onClose(); 
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  useEffect(() => { if (isOpen) fetchDetails(); }, [isOpen, bookedTicketId]);
+  useEffect(() => { 
+    if (isOpen) {
+      fetchDetails(); 
+    }
+  }, [isOpen, bookedTicketId]);
 
   // delete API
   const handleRevoke = async (ticketCode: string, maxQty: number) => {
     const qty = revokeQuantities[ticketCode] || 1;
-    if (qty < 1 || qty > maxQty) return;
+    if (qty < 1 || qty > maxQty) {
+      return;
+    }
     setRevokingCode(ticketCode);
     try {
       const response = await fetch(
@@ -58,7 +73,7 @@ export default function RevokeModal({
       );
       if (response.ok) {
         setStatus({ isOpen: true, type: "success", title: "Revoke Successful!", message: `${qty} ticket(s) have been successfully revoked.` });
-        fetchDetails();
+        await fetchDetails();
       } else {
         const errorData = await response.json();
         setStatus({ isOpen: true, type: "error", title: "Revoke Failed", message: errorData.detail || "Something went wrong. Please try again." });
@@ -71,7 +86,9 @@ export default function RevokeModal({
     }
   };
 
-  const handleCloseStatus = () => setStatus((prev) => ({ ...prev, isOpen: false }));
+  const handleCloseStatus = () => {
+    setStatus((prev) => ({ ...prev, isOpen: false }));
+  };
 
   const updateRevokeQty = (ticketCode: string, qty: number, max: number) => {
     setRevokeQuantities({ ...revokeQuantities, [ticketCode]: Math.max(1, Math.min(qty, max)) });

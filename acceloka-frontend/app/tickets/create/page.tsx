@@ -63,7 +63,9 @@ export default function ManageTicketsPage() {
 
   const handleDeleteTicket = async () => {
     const ticketCode = deleteConfirm.ticketCode;
-    if (!ticketCode) return;
+    if (!ticketCode) {
+      return;
+    }
 
     setDeleteConfirm({ isOpen: false, ticketCode: null });
 
