@@ -19,6 +19,11 @@ namespace Acceloka.Handlers.BookedTicketHandler
             const int DEFAULT_PAGE_SIZE = 10;
             var query = _db.Bookings.AsQueryable();
 
+            if (request.UserId.HasValue)
+            {
+                query = query.Where(b => b.UserId == request.UserId.Value);
+            }
+
             var totalBookings = await query.CountAsync(ct);
             int totalPages = (int)Math.Ceiling((double)totalBookings / DEFAULT_PAGE_SIZE);
 

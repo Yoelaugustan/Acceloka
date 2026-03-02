@@ -31,7 +31,14 @@ namespace Acceloka.Controllers
         [HttpGet("get-bookings")]
         public async Task<IResult> GetAllBookings([FromQuery] int pageNumber = 1)
         {
-            var result = await _mediator.Send(new GetBookingsQuery(pageNumber));
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int? userId = null;
+            if (int.TryParse(userIdStr, out var id))
+            {
+                userId = id;
+            }
+
+            var result = await _mediator.Send(new GetBookingsQuery(userId, pageNumber));
             return result;
         }
 

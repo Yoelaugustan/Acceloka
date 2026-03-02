@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Modal } from "antd";
 import { ArrowCounterClockwiseIcon } from "@phosphor-icons/react";
 import { StatusModal } from "../StatusModal";
+import { api } from "@/lib/api";
 import { BookedTicketCategoryDetail, RevokeModalProps } from "@/types/api";
 
 export default function RevokeModal({
@@ -29,8 +30,8 @@ export default function RevokeModal({
     if (bookedTicketId !== null) {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5224/api/v1/get-booked-ticket/${bookedTicketId}`);
-        const data: BookedTicketCategoryDetail[] = await response.json();
+        const response = await api.get(`/v1/get-booked-ticket/${bookedTicketId}`);
+        const data: BookedTicketCategoryDetail[] = response.data;
         
         setDetails(data);
         const initialQtys: { [key: string]: number } = {};
@@ -67,20 +68,14 @@ export default function RevokeModal({
     }
     setRevokingCode(ticketCode);
     try {
-      const response = await fetch(
-        `http://localhost:5224/api/v1/revoke-ticket/${bookedTicketId}/${ticketCode}/${qty}`,
-        { method: "DELETE" }
-      );
-      if (response.ok) {
-        setStatus({ isOpen: true, type: "success", title: "Revoke Successful!", message: `${qty} ticket(s) have been successfully revoked.` });
-        await fetchDetails();
-      } else {
-        const errorData = await response.json();
-        setStatus({ isOpen: true, type: "error", title: "Revoke Failed", message: errorData.detail || "Something went wrong. Please try again." });
-      }
-    } catch (error) {
+      await api.delete(`/v1/revoke-ticket/${bookedTicketId}/${ticketCode}/${qty}`);
+      
+      setStatus({ isOpen: true, type: "success", title: "Revoke Successful!", message: `${qty} ticket(s) have been successfully revoked.` });
+      await fetchDetails();
+    } catch (error: any) {
       console.error(error);
-      setStatus({ isOpen: true, type: "error", title: "Unexpected Error", message: "An unexpected error occurred. Please check your connection." });
+      const errorData = error.response?.data;
+      setStatus({ isOpen: true, type: "error", title: "Revoke Failed", message: errorData?.detail || "Something went wrong. Please try again." });
     } finally {
       setRevokingCode(null);
     }
