@@ -4,6 +4,7 @@ namespace Acceloka.Queries
 {
     public class TicketsQuery : IRequest<IResult>
     {
+        public int? userId { get; set; }
         public string? categoryName { get; set; }
         public string? ticketCode { get; set; }
         public string? ticketName { get; set; }

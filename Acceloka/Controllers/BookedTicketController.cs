@@ -1,7 +1,9 @@
 ﻿using Acceloka.Commands.BookedTicket;
 using Acceloka.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,6 +11,7 @@ namespace Acceloka.Controllers
 {
     [Route("api/v1/")]
     [ApiController]
+    [Authorize]
     public class BookedTicketController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -36,6 +39,12 @@ namespace Acceloka.Controllers
         [HttpPost("book-ticket")]
         public async Task<IResult> CreateBookedTicket([FromBody] PostBookedTicketCommand command)
         {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (int.TryParse(userIdStr, out var userId))
+            {
+                command.UserId = userId;
+            }
+
             var result = await _mediator.Send(command);
             return result;
         }

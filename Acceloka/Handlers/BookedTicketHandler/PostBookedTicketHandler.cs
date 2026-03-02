@@ -83,7 +83,10 @@ namespace Acceloka.Handlers.BookedTicketHandler
             // insert to DB
 
             // create new booking
-            var newBooking = new Booking();
+            var newBooking = new Booking
+            {
+                UserId = request.UserId
+            };
             _db.Bookings.Add(newBooking);
 
             await _db.SaveChangesAsync(ct);

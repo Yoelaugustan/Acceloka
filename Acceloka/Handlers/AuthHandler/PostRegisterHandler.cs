@@ -23,13 +23,19 @@ namespace Acceloka.Handlers.AuthHandler
         {
             var validationResult = await _validator.ValidateAsync(request, ct);
             if (!validationResult.IsValid)
+            {
                 return Results.ValidationProblem(validationResult.ToDictionary());
+            }
 
             if (await _db.Users.AnyAsync(u => u.Username == request.Username, ct))
+            {
                 return Results.BadRequest("Username already exists.");
+            }
 
             if (await _db.Users.AnyAsync(u => u.Email == request.Email, ct))
+            {
                 return Results.BadRequest("Email already exists.");
+            }
 
             var user = new User
             {
