@@ -37,6 +37,7 @@ Open `Acceloka/appsettings.json` and update the `ConnectionStrings:SQLServerDB` 
 ```
 
 ### 5. Run Frontend
+Open New Command Prompt
 ```bash
 cd acceloka-frontend
 npm install
