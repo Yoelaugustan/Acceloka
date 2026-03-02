@@ -7,6 +7,8 @@ public partial class Ticket
 {
     public int TicketId { get; set; }
 
+    public int UserId { get; set; }
+
     public string TicketCode { get; set; } = null!;
 
     public string TicketName { get; set; } = null!;
@@ -22,4 +24,6 @@ public partial class Ticket
     public virtual ICollection<BookedTicket> BookedTickets { get; set; } = new List<BookedTicket>();
 
     public virtual Category CategoryNameNavigation { get; set; } = null!;
+
+    public virtual User User { get; set; } = null!;
 }
