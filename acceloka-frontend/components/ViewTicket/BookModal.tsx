@@ -45,7 +45,9 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
           <span>{ticket.categoryName}</span>
         </div>
 
-        <div className="text-[10px] sm:text-xs text-dark-3">{ticket.eventDate}</div>
+        <div className="text-[10px] sm:text-xs text-dark-3">
+          {ticket.eventDate}
+        </div>
 
         <div className="text-sm sm:text-base font-bold text-dark-1 mt-1">
           Rp. {ticket.price.toLocaleString("id-ID")}
@@ -71,9 +73,7 @@ export function BookModal({ ticket, onClose }: BookModalProps) {
       </div>
 
       {/* input quantity */}
-      <div
-        className="flex flex-col justify-center gap-3 px-5 py-6 w-full sm:w-45"
-      >
+      <div className="flex flex-col justify-center gap-3 px-5 py-6 w-full sm:w-45">
         <div>
           <label className="text-[10px] sm:text-xs font-bold text-dark-1 tracking-wider uppercase mb-1.5 block">
             Quantity

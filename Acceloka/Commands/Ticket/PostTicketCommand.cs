@@ -5,6 +5,7 @@ namespace Acceloka.Commands.Ticket
 {
     public class PostTicketCommand : IRequest<IResult>
     {
+        public int UserId { get; set; }
         public List<TicketInput> Tickets { get; set; } = new List<TicketInput>();
     }
 

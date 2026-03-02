@@ -4,6 +4,7 @@ namespace Acceloka.Commands.BookedTicket
 {
     public class PostBookedTicketCommand : IRequest<IResult>
     {
+        public int UserId { get; set; }
         public List<PostBookingRequestItem> BookingItems { get; set; } = new();
     }
 

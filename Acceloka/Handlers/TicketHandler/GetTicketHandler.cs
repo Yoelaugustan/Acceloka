@@ -32,6 +32,12 @@ namespace Acceloka.Handlers.CategoryHandler
             // Only show tickets that has quota
             query = query.Where(t => t.Quota > 0);
 
+            // Filter By User (For Create Ticket Page)
+            if (request.userId.HasValue)
+            {
+                query = query.Where(t => t.UserId == request.userId);
+            }
+
             // Fileter By Name
             if (!string.IsNullOrEmpty(request.categoryName))
             {

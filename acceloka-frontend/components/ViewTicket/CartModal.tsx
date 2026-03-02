@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react"; // Import useState for loading state
+import React, { useMemo, useState } from "react";
 import { Modal } from "antd";
 import { useCart, CartItem } from "../../context/CartContext";
 import {
@@ -10,6 +10,8 @@ import {
 } from "@phosphor-icons/react";
 import { CartModalProps } from "@/types/api";
 import { StatusModal } from "../StatusModal";
+import { AxiosError } from "axios";
+import { api } from "@/lib/api";
 
 export function CartModal({ isOpen, onClose }: CartModalProps) {
   const { cart, removeFromCart, updateCartQuantity } = useCart();
@@ -52,44 +54,36 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
         quantity: item.quantity,
       }));
 
-      const response = await fetch("http://localhost:5224/api/v1/book-ticket", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ bookingItems }),
+      const response = await api.post("/v1/book-ticket", {
+        bookingItems,
       });
 
-      if (response.ok) {
-        // Clear cart on success
-        const itemsToRemove = [...cart];
-        itemsToRemove.forEach((item) => removeFromCart(item.ticketCode));
+      const itemsToRemove = [...cart];
+      itemsToRemove.forEach((item) => removeFromCart(item.ticketCode));
 
-        setStatus({
-          isOpen: true,
-          type: "success",
-          title: "Booking Successful!",
-          message: "Your tickets have been reserved. Enjoy your experience!",
-        });
-      } else {
-        const errorData = await response.json();
-        setStatus({
-          isOpen: true,
-          type: "error",
-          title: "Booking Failed",
-          message:
-            errorData.title ||
-            errorData.detail ||
-            "Something went wrong. Please try again.",
-        });
-      }
-    } catch (error) {
+      setStatus({
+        isOpen: true,
+        type: "success",
+        title: "Booking Successful!",
+        message: "Your tickets have been reserved. Enjoy your experience!",
+      });
+    } catch (error: unknown) {
       console.error("Error during checkout:", error);
+
+      const axiosError = error as AxiosError<{
+        title?: string;
+        detail?: string;
+      }>;
+      const errorData = axiosError.response?.data;
+
       setStatus({
         isOpen: true,
         type: "error",
-        title: "Unexpected Error",
-        message: "An unexpected error occurred. Please check your connection.",
+        title: "Booking Failed",
+        message:
+          errorData?.title ||
+          errorData?.detail ||
+          "Something went wrong. Please check if you are logged in and try again.",
       });
     } finally {
       setLoadingCheckout(false);

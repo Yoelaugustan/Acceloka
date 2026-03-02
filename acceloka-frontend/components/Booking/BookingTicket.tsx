@@ -32,7 +32,8 @@ export function BookingTicket({
           </h3>
           <div className="space-y-1 text-xs sm:text-sm text-dark-3 uppercase">
             <p className="font-bold">
-              Quantity: <span className="text-dark-1">{booking.totalTickets}</span>
+              Quantity:{" "}
+              <span className="text-dark-1">{booking.totalTickets}</span>
             </p>
             <p className="mt-2 font-bold">
               Total Price: <br />

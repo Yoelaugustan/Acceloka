@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from "react";
 import HamburgerMenu from "@/components/Sidebar/HamburgerMenu";
 import { PlusCircleIcon } from "@phosphor-icons/react";
-import { Ticket, TicketListResponse } from "@/types/api";
+import { ApiError, Ticket, TicketListResponse } from "@/types/api";
 import { CreateModal } from "@/components/Create/CreateModal";
 import { StatusModal } from "@/components/StatusModal";
 import { CreateTicketCard } from "@/components/Create/CreateTicketCard";
 import { DeleteConfirmModal } from "@/components/Create/DeleteConfirmModal";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 
 export default function ManageTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -30,20 +33,21 @@ export default function ManageTicketsPage() {
     message: string;
   }>({ isOpen: false, type: "success", title: "", message: "" });
 
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:5224/api/v1/get-available-ticket?pageNumber=${page}`,
-      );
-      const data: TicketListResponse = await response.json();
+      const response = await api.get(`/v1/get-my-tickets?pageNumber=${page}`);
+      const data: TicketListResponse = response.data;
 
       setTickets(data.tickets || []);
       if (data.pages) {
         const total = parseInt(data.pages.split("/")[1]);
         setTotalPages(total || 1);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching tickets:", error);
     } finally {
       setLoading(false);
@@ -51,8 +55,12 @@ export default function ManageTicketsPage() {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/ticket/create");
+      return;
+    }
     fetchTickets();
-  }, [page]);
+  }, [page, isAuthenticated, router]);
 
   const handleCloseStatus = () =>
     setStatus((prev) => ({ ...prev, isOpen: false }));
@@ -70,38 +78,35 @@ export default function ManageTicketsPage() {
     setDeleteConfirm({ isOpen: false, ticketCode: null });
 
     try {
-      const response = await fetch(
-        `http://localhost:5224/api/v1/delete-ticket/${ticketCode}`,
-        {
-          method: "DELETE",
-        },
-      );
-      if (response.ok) {
-        setStatus({
-          isOpen: true,
-          type: "success",
-          title: "Ticket Deleted",
-          message: `Ticket ${ticketCode} has been deleted successfully.`,
-        });
-        fetchTickets();
-      } else {
-        const data = await response.json();
-        setStatus({
-          isOpen: true,
-          type: "error",
-          title: "Delete Failed",
-          message: data.detail || "Failed to delete ticket.",
-        });
-      }
-    } catch (error) {
+      await api.delete(`/v1/delete-ticket/${ticketCode}`);
+
+      setStatus({
+        isOpen: true,
+        type: "success",
+        title: "Ticket Deleted",
+        message: `Ticket ${ticketCode} has been deleted successfully.`,
+      });
+      fetchTickets();
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to delete ticket.";
+
       setStatus({
         isOpen: true,
         type: "error",
-        title: "Error",
-        message: "An error occurred while deleting the ticket.",
+        title: "Delete Failed",
+        message: errorMessage,
       });
     }
   };
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="p-6 flex flex-col h-full bg-white">

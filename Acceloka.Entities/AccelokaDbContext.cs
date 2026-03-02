@@ -19,6 +19,8 @@ public partial class AccelokaDbContext : DbContext
 
     public virtual DbSet<Ticket> Tickets { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
@@ -31,7 +33,7 @@ public partial class AccelokaDbContext : DbContext
     {
         modelBuilder.Entity<BookedTicket>(entity =>
         {
-            entity.HasKey(e => e.BookedTicketDetailId).HasName("PK__BookedTi__3C836D9382A8808C");
+            entity.HasKey(e => e.BookedTicketDetailId).HasName("PK__BookedTi__3C836D93E20E59FF");
 
             entity.Property(e => e.TicketCode)
                 .HasMaxLength(50)
@@ -51,7 +53,16 @@ public partial class AccelokaDbContext : DbContext
 
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.BookedTicketId).HasName("PK__Bookings__9110472F48D0BF3D");
+            entity.HasKey(e => e.BookedTicketId).HasName("PK__Bookings__9110472F689475A7");
+
+            entity.Property(e => e.BookingDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Bookings)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Bookings_Users");
         });
 
         modelBuilder.Entity<Category>(entity =>
@@ -65,9 +76,9 @@ public partial class AccelokaDbContext : DbContext
 
         modelBuilder.Entity<Ticket>(entity =>
         {
-            entity.HasKey(e => e.TicketId).HasName("PK__Tickets__712CC607B5358F7C");
+            entity.HasKey(e => e.TicketId).HasName("PK__Tickets__712CC6077AEC0702");
 
-            entity.HasIndex(e => e.TicketCode, "UQ__Tickets__598CF7A315C8FBED").IsUnique();
+            entity.HasIndex(e => e.TicketCode, "UQ__Tickets__598CF7A3153E39BA").IsUnique();
 
             entity.Property(e => e.CategoryName)
                 .HasMaxLength(100)
@@ -85,6 +96,33 @@ public partial class AccelokaDbContext : DbContext
                 .HasForeignKey(d => d.CategoryName)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Tickets_Categories");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Tickets)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Tickets_Users");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4C17EDAB7D");
+
+            entity.HasIndex(e => e.Username, "UQ__Users__536C85E4805A9DF3").IsUnique();
+
+            entity.HasIndex(e => e.Email, "UQ__Users__A9D1053410264F19").IsUnique();
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Email)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.PasswordHash)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
+                .IsUnicode(false);
         });
 
         OnModelCreatingPartial(modelBuilder);

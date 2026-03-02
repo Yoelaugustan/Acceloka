@@ -29,7 +29,6 @@ const defaultFilters: FilterData = {
 
 export default function TicketsPage() {
   return (
-    // use cart provider to access the cart items and functions
     <CartProvider>
       <ViewTicketsPage />
     </CartProvider>
@@ -273,7 +272,7 @@ function ViewTicketsPage() {
           disabled={page === 1}
           className="px-4 py-2 bg-primary text-white rounded-lg disabled:opacity-50 cursor-pointer"
         >
-          prev  
+          prev
         </button>
 
         <span className="font-mono font-bold text-dark-1">

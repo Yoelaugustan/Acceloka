@@ -1,6 +1,7 @@
 import { Ticket } from "@/types/api";
 import { useCart } from "@/context/CartContext";
-import { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface TicketCardProps extends Ticket {
   onBookClick: (ticket: Ticket) => void;
@@ -17,11 +18,18 @@ export default function TicketCard(props: TicketCardProps) {
     onBookClick,
   } = props;
   const { cart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const isLow: boolean = quota <= 5;
 
   const isAddedToCart = cart.some((item) => item.ticketCode === ticketCode);
 
   const handleAddClick = (): void => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+      return;
+    }
+
     onBookClick({
       categoryName,
       eventDate,

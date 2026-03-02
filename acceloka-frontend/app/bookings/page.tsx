@@ -6,6 +6,9 @@ import BookingDetailModal from "@/components/Booking/BookingDetailModal";
 import RevokeModal from "@/components/Booking/RevokeModal";
 import { BookingSummary, BookingListResponse } from "@/types/api";
 import HamburgerMenu from "@/components/Sidebar/HamburgerMenu";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<BookingSummary[]>([]);
@@ -18,20 +21,21 @@ export default function BookingsPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isRevokeOpen, setIsRevokeOpen] = useState(false);
 
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:5224/api/v1/get-bookings?pageNumber=${page}`,
-      );
-      const data: BookingListResponse = await response.json();
+      const response = await api.get(`/v1/get-bookings?pageNumber=${page}`);
+      const data: BookingListResponse = response.data;
       setBookings(data.bookings || []);
       setTotalBookings(data.totalBookings || 0);
       if (data.pages) {
         const total = parseInt(data.pages.split("/")[1]);
         setTotalPages(total);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching bookings:", error);
     } finally {
       setLoading(false);
@@ -39,8 +43,16 @@ export default function BookingsPage() {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/bookings");
+      return;
+    }
     fetchBookings();
-  }, [page]);
+  }, [page, isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="p-4 sm:p-6 flex flex-col h-full bg-white">

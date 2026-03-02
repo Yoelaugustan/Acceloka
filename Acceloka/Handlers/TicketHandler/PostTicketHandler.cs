@@ -47,6 +47,7 @@ namespace Acceloka.Handlers.TicketHandler
             {
                 var newTicket = new Ticket
                 {
+                    UserId = request.UserId,
                     TicketCode = ticketInput.Code,
                     TicketName = ticketInput.Name,
                     CategoryName = ticketInput.CategoryName,
