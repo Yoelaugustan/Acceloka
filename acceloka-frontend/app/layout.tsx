@@ -3,6 +3,7 @@ import { Instrument_Sans, Spline_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { SidebarProvider } from "@/context/SidebarContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 const instrument = Instrument_Sans({
   subsets: ["latin"],
@@ -35,10 +36,12 @@ export default function RootLayout({
       <body
         className={`${instrument.variable} ${spline.variable} ${dmMono.variable} flex h-screen bg-white`}
       >
-        <SidebarProvider>
-          <Sidebar />
-          <main className="flex-1 overflow-hidden">{children}</main>
-        </SidebarProvider>
+        <AuthProvider>
+          <SidebarProvider>
+            <Sidebar />
+            <main className="flex-1 overflow-hidden">{children}</main>
+          </SidebarProvider>
+        </AuthProvider>
       </body>
     </html>
   );
