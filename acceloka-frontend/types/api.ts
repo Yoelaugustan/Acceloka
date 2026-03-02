@@ -141,3 +141,14 @@ export interface DeleteConfirmModalProps {
   onCancel: () => void;
   onConfirm: () => void;
 }
+
+export interface User {
+  username: string;
+}
+
+export interface AuthContextType {
+  user: User | null;
+  login: (token: string, username: string) => void;
+  logout: () => void;
+  isAuthenticated: boolean;
+}
