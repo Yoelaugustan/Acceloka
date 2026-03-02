@@ -27,9 +27,7 @@ export default function BookingsPage() {
   const fetchBookings = async () => {
     setLoading(true);
     try {
-      const response = await api.get(
-        `/v1/get-bookings?pageNumber=${page}`
-      );
+      const response = await api.get(`/v1/get-bookings?pageNumber=${page}`);
       const data: BookingListResponse = response.data;
       setBookings(data.bookings || []);
       setTotalBookings(data.totalBookings || 0);
@@ -37,7 +35,7 @@ export default function BookingsPage() {
         const total = parseInt(data.pages.split("/")[1]);
         setTotalPages(total);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching bookings:", error);
     } finally {
       setLoading(false);
@@ -46,13 +44,15 @@ export default function BookingsPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-        router.push("/bookings");
-        return;
+      router.push("/bookings");
+      return;
     }
     fetchBookings();
   }, [page, isAuthenticated, router]);
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="p-4 sm:p-6 flex flex-col h-full bg-white">

@@ -57,6 +57,22 @@ export interface CartItem {
   eventDate: string;
 }
 
+export interface CartContextType {
+  cart: CartItem[];
+  addToCart: (
+    ticketCode: string,
+    quantity: number,
+    ticketName: string,
+    price: number,
+    categoryName: string,
+    quota: number,
+    eventDate: string,
+  ) => void;
+  removeFromCart: (ticketCode: string) => void;
+  updateCartQuantity: (ticketCode: string, newQuantity: number) => void;
+  getUniqueItemCount: () => number;
+}
+
 export type ModalMode = "book" | "create";
 
 export interface BookModalProps {
@@ -151,4 +167,14 @@ export interface AuthContextType {
   login: (token: string, username: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
+}
+
+export interface ApiError {
+  response?: {
+    data?: {
+      detail?: string;
+      message?: string;
+    };
+  };
+  message?: string;
 }

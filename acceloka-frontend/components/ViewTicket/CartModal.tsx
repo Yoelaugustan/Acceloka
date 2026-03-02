@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react"; // Import useState for loading state
+import React, { useMemo, useState } from "react";
 import { Modal } from "antd";
 import { useCart, CartItem } from "../../context/CartContext";
 import {
@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react";
 import { CartModalProps } from "@/types/api";
 import { StatusModal } from "../StatusModal";
+import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 
 export function CartModal({ isOpen, onClose }: CartModalProps) {
@@ -54,7 +55,7 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
       }));
 
       const response = await api.post("/v1/book-ticket", {
-        bookingItems
+        bookingItems,
       });
 
       const itemsToRemove = [...cart];
@@ -66,11 +67,15 @@ export function CartModal({ isOpen, onClose }: CartModalProps) {
         title: "Booking Successful!",
         message: "Your tickets have been reserved. Enjoy your experience!",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error during checkout:", error);
-      
-      const errorData = error.response?.data;
-      
+
+      const axiosError = error as AxiosError<{
+        title?: string;
+        detail?: string;
+      }>;
+      const errorData = axiosError.response?.data;
+
       setStatus({
         isOpen: true,
         type: "error",

@@ -7,7 +7,9 @@ import { useSidebar } from "@/context/SidebarContext";
 export default function HamburgerMenu() {
   const { toggleSidebar, isMobileOpen } = useSidebar();
 
-  if (isMobileOpen) return null;
+  if (isMobileOpen) {
+    return null;
+  }
 
   return (
     <button

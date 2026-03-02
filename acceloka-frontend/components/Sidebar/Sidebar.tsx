@@ -12,7 +12,7 @@ import {
   XIcon,
   SignInIcon,
   SignOutIcon,
-  UserIcon
+  UserIcon,
 } from "@phosphor-icons/react";
 import { useSidebar } from "@/context/SidebarContext";
 import { useAuth } from "@/context/AuthContext";
@@ -64,7 +64,7 @@ export default function Sidebar() {
           )}
         </div>
 
-        <nav className="flex-1 space-y-7 relative">
+        <nav className="flex-1 space-y-3 relative">
           {/* Tickets Menu Item */}
           <div className="relative">
             {isPageActive("/tickets") && (
@@ -122,7 +122,7 @@ export default function Sidebar() {
               >
                 View Tickets
               </Link>
-              
+
               {isAuthenticated && (
                 <Link
                   href="/tickets/create"
@@ -162,12 +162,12 @@ export default function Sidebar() {
         {/* User display when expanded */}
         {!collapsed && isAuthenticated && (
           <div className="p-4 pb-0">
-             <div className="flex items-center gap-3 px-3">
-                <UserIcon size={32} weight="fill" className="text-primary" />
-                <span className="text-lg font-bold text-primary truncate">
-                  {user?.username || "User"}
-                </span>
-              </div>
+            <div className="flex items-center gap-3 px-3">
+              <UserIcon size={32} weight="fill" className="text-primary" />
+              <span className="text-lg font-bold text-primary truncate">
+                {user?.username || "User"}
+              </span>
+            </div>
           </div>
         )}
 
@@ -186,7 +186,7 @@ export default function Sidebar() {
               className={`flex items-center text-red-500 hover:bg-red-50 rounded-lg transition-all cursor-pointer h-12 ${
                 collapsed ? "justify-center w-12" : "gap-3 px-3"
               }`}
-              title="Logout"  
+              title="Logout"
             >
               <SignOutIcon size={32} weight="bold" />
             </button>

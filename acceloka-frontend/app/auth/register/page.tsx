@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { StatusModal } from "@/components/StatusModal";
+import { ApiError } from "@/types/api";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -24,8 +25,11 @@ export default function RegisterPage() {
         password,
       });
       setShowSuccess(true);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "An error occurred during registration.");
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      const serverMessage =
+        error.response?.data?.message || error.response?.data?.detail;
+      setError(serverMessage || "An error occurred during registration.");
     }
   };
 
@@ -40,7 +44,7 @@ export default function RegisterPage() {
         <div className="flex justify-center mb-8">
           <Image src="/Logo.png" alt="Logo" width={180} height={45} />
         </div>
-        
+
         <h2 className="mb-2 text-center text-3xl font-bold text-dark-1 font-heading">
           Create Account
         </h2>
@@ -56,7 +60,10 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="mb-2 block text-sm font-bold text-dark-1 font-mono uppercase tracking-wider" htmlFor="username">
+            <label
+              className="mb-2 block text-sm font-bold text-dark-1 font-mono uppercase tracking-wider"
+              htmlFor="username"
+            >
               Username
             </label>
             <input
@@ -70,7 +77,10 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-bold text-dark-1 font-mono uppercase tracking-wider" htmlFor="email">
+            <label
+              className="mb-2 block text-sm font-bold text-dark-1 font-mono uppercase tracking-wider"
+              htmlFor="email"
+            >
               Email Address
             </label>
             <input
@@ -84,7 +94,10 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-bold text-dark-1 font-mono uppercase tracking-wider" htmlFor="password">
+            <label
+              className="mb-2 block text-sm font-bold text-dark-1 font-mono uppercase tracking-wider"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
@@ -97,7 +110,7 @@ export default function RegisterPage() {
               required
             />
           </div>
-          
+
           <div className="pt-2">
             <button
               className="w-full rounded-full bg-primary py-3.5 font-bold text-white shadow-lg hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer text-lg"
@@ -106,10 +119,15 @@ export default function RegisterPage() {
               Sign Up
             </button>
           </div>
-          
+
           <div className="text-center pt-2">
-            <span className="text-dark-3 text-sm">Already have an account? </span>
-            <Link href="/auth/login" className="text-sm font-bold text-primary hover:underline">
+            <span className="text-dark-3 text-sm">
+              Already have an account?{" "}
+            </span>
+            <Link
+              href="/auth/login"
+              className="text-sm font-bold text-primary hover:underline"
+            >
               Sign In
             </Link>
           </div>

@@ -29,7 +29,7 @@ export default function FilterModal({
         );
         const data = await response.json();
         setCategories(data);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error fetching categories:", error);
       }
     };

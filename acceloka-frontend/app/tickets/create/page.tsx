@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import HamburgerMenu from "@/components/Sidebar/HamburgerMenu";
 import { PlusCircleIcon } from "@phosphor-icons/react";
-import { Ticket, TicketListResponse } from "@/types/api";
+import { ApiError, Ticket, TicketListResponse } from "@/types/api";
 import { CreateModal } from "@/components/Create/CreateModal";
 import { StatusModal } from "@/components/StatusModal";
 import { CreateTicketCard } from "@/components/Create/CreateTicketCard";
@@ -39,9 +39,7 @@ export default function ManageTicketsPage() {
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await api.get(
-        `/v1/get-my-tickets?pageNumber=${page}`
-      );
+      const response = await api.get(`/v1/get-my-tickets?pageNumber=${page}`);
       const data: TicketListResponse = response.data;
 
       setTickets(data.tickets || []);
@@ -49,7 +47,7 @@ export default function ManageTicketsPage() {
         const total = parseInt(data.pages.split("/")[1]);
         setTotalPages(total || 1);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching tickets:", error);
     } finally {
       setLoading(false);
@@ -58,8 +56,8 @@ export default function ManageTicketsPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-        router.push("/ticket/create");
-        return;
+      router.push("/ticket/create");
+      return;
     }
     fetchTickets();
   }, [page, isAuthenticated, router]);
@@ -81,7 +79,7 @@ export default function ManageTicketsPage() {
 
     try {
       await api.delete(`/v1/delete-ticket/${ticketCode}`);
-      
+
       setStatus({
         isOpen: true,
         type: "success",
@@ -89,18 +87,26 @@ export default function ManageTicketsPage() {
         message: `Ticket ${ticketCode} has been deleted successfully.`,
       });
       fetchTickets();
-      
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to delete ticket.";
+
       setStatus({
         isOpen: true,
         type: "error",
         title: "Delete Failed",
-        message: error.response?.data?.detail || "Failed to delete ticket.",
+        message: errorMessage,
       });
     }
   };
 
-  if (!isAuthenticated) return null;
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="p-6 flex flex-col h-full bg-white">

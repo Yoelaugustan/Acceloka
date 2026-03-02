@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { CreateModalProps, Category } from "@/types/api";
+import { CreateModalProps, Category, ApiError } from "@/types/api";
 import { TicketModal } from "../TicketModal";
 import { StatusModal } from "../StatusModal";
 import { api } from "@/lib/api";
@@ -34,7 +34,7 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
       if (Array.isArray(data)) {
         setCategories(data);
       }
-    } catch (e) {
+    } catch (e: unknown) {
       console.error("Failed to fetch categories", e);
     }
   };
@@ -49,12 +49,11 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
     }
     try {
       await api.post("/v1/insert-category", { name: newCategoryName });
-      
       await fetchCategories();
       setCategoryName(newCategoryName);
       setIsAddingCategory(false);
       setNewCategoryName("");
-    } catch (e) {
+    } catch (e: unknown) {
       console.error("Failed to add category", e);
     }
   };
@@ -103,14 +102,17 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
         quota: Number(quota),
       });
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      const errData = error.response?.data;
+      const err = error as ApiError;
+      const errData = err.response?.data;
       setStatus({
         isOpen: true,
         type: "error",
         title: "Creation Failed",
-        message: errData?.detail || "Failed to create ticket. Please check if you are logged in.",
+        message:
+          errData?.detail ||
+          "Failed to create ticket. Please check if you are logged in.",
       });
     }
   };
@@ -124,7 +126,9 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
     <>
       <TicketModal onClose={onClose}>
         <div className="flex items-center justify-center p-4 sm:p-6 shrink-0 w-full sm:w-37.5">
-          <span className="font-mono font-bold text-dark-1 text-center">New Ticket</span>
+          <span className="font-mono font-bold text-dark-1 text-center">
+            New Ticket
+          </span>
         </div>
 
         {/* tear line */}

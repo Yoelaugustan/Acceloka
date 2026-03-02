@@ -1,7 +1,6 @@
-"use client"
+"use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { AuthContextType, User } from "@/types/api";
 
@@ -12,10 +11,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    // Check for token on mount
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
-    
+
     if (token && username) {
       setUser({ username });
     }
@@ -36,7 +34,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, isAuthenticated: !!user }}
+    >
       {children}
     </AuthContext.Provider>
   );

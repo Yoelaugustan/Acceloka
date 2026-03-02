@@ -1,6 +1,5 @@
 import { Ticket } from "@/types/api";
 import { useCart } from "@/context/CartContext";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 

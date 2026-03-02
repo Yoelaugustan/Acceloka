@@ -6,6 +6,7 @@ import { PencilSimpleIcon, CheckCircleIcon } from "@phosphor-icons/react";
 import { StatusModal } from "../StatusModal";
 import { api } from "@/lib/api";
 import {
+  ApiError,
   BookedTicketCategoryDetail,
   BookedTicketItem,
   BookingDetailModalProps,
@@ -32,11 +33,11 @@ export default function BookingDetailModal({
     message: string;
   }>({ isOpen: false, type: "success", title: "", message: "" });
 
-  // fetch booking details
   useEffect(() => {
     if (isOpen && bookedTicketId !== null) {
       setLoading(true);
-      api.get(`/v1/get-booked-ticket/${bookedTicketId}`)
+      api
+        .get(`/v1/get-booked-ticket/${bookedTicketId}`)
         .then((res) => {
           const data: BookedTicketCategoryDetail[] = res.data;
           setDetails(data);
@@ -52,9 +53,9 @@ export default function BookingDetailModal({
           setQuotaMap(quotas);
           setLoading(false);
         })
-        .catch((err) => {
-            console.error(err);
-            setLoading(false);
+        .catch((err: unknown) => {
+          console.error(err);
+          setLoading(false);
         });
     }
   }, [isOpen, bookedTicketId]);
@@ -67,12 +68,28 @@ export default function BookingDetailModal({
         ([ticketCode, quantity]) => ({ ticketCode, quantity }),
       );
       await api.put(`/v1/edit-booked-ticket/${bookedTicketId}`, payload);
-      
-      setStatus({ isOpen: true, type: "success", title: "Update Successful!", message: "Ticket quantities have been successfully updated." });
-    } catch (error: any) {
+
+      setStatus({
+        isOpen: true,
+        type: "success",
+        title: "Update Successful!",
+        message: "Ticket quantities have been successfully updated.",
+      });
+    } catch (error: unknown) {
       console.error(error);
-      const errorData = error.response?.data;
-      setStatus({ isOpen: true, type: "error", title: "Update Failed", message: errorData?.detail || "Something went wrong. Please try again." });
+      const err = error as ApiError;
+      const errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        err.message ||
+        "Something went wrong. Please try again.";
+
+      setStatus({
+        isOpen: true,
+        type: "error",
+        title: "Update Failed",
+        message: errorMessage,
+      });
     } finally {
       setIsUpdating(false);
     }

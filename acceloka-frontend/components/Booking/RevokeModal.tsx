@@ -5,7 +5,11 @@ import { Modal } from "antd";
 import { ArrowCounterClockwiseIcon } from "@phosphor-icons/react";
 import { StatusModal } from "../StatusModal";
 import { api } from "@/lib/api";
-import { BookedTicketCategoryDetail, RevokeModalProps } from "@/types/api";
+import {
+  ApiError,
+  BookedTicketCategoryDetail,
+  RevokeModalProps,
+} from "@/types/api";
 
 export default function RevokeModal({
   isOpen,
@@ -16,7 +20,9 @@ export default function RevokeModal({
   const [details, setDetails] = useState<BookedTicketCategoryDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [revokingCode, setRevokingCode] = useState<string | null>(null);
-  const [revokeQuantities, setRevokeQuantities] = useState<{ [key: string]: number }>({});
+  const [revokeQuantities, setRevokeQuantities] = useState<{
+    [key: string]: number;
+  }>({});
 
   const [status, setStatus] = useState<{
     isOpen: boolean;
@@ -25,28 +31,29 @@ export default function RevokeModal({
     message: string;
   }>({ isOpen: false, type: "success", title: "", message: "" });
 
-  // fetch booking details
   const fetchDetails = async () => {
     if (bookedTicketId !== null) {
       setLoading(true);
       try {
-        const response = await api.get(`/v1/get-booked-ticket/${bookedTicketId}`);
+        const response = await api.get(
+          `/v1/get-booked-ticket/${bookedTicketId}`,
+        );
         const data: BookedTicketCategoryDetail[] = response.data;
-        
+
         setDetails(data);
         const initialQtys: { [key: string]: number } = {};
         data.forEach((cat) => {
-          cat.tickets.forEach((t) => { 
-            initialQtys[t.ticketCode] = 1; 
+          cat.tickets.forEach((t) => {
+            initialQtys[t.ticketCode] = 1;
           });
         });
         setRevokeQuantities(initialQtys);
-        
-        if (data.length === 0) { 
-          onSuccess(); 
-          onClose(); 
+
+        if (data.length === 0) {
+          onSuccess();
+          onClose();
         }
-      } catch (err) {
+      } catch (err: unknown) {
         console.error(err);
       } finally {
         setLoading(false);
@@ -54,9 +61,9 @@ export default function RevokeModal({
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     if (isOpen) {
-      fetchDetails(); 
+      fetchDetails();
     }
   }, [isOpen, bookedTicketId]);
 
@@ -68,14 +75,31 @@ export default function RevokeModal({
     }
     setRevokingCode(ticketCode);
     try {
-      await api.delete(`/v1/revoke-ticket/${bookedTicketId}/${ticketCode}/${qty}`);
-      
-      setStatus({ isOpen: true, type: "success", title: "Revoke Successful!", message: `${qty} ticket(s) have been successfully revoked.` });
+      await api.delete(
+        `/v1/revoke-ticket/${bookedTicketId}/${ticketCode}/${qty}`,
+      );
+
+      setStatus({
+        isOpen: true,
+        type: "success",
+        title: "Revoke Successful!",
+        message: `${qty} ticket(s) have been successfully revoked.`,
+      });
       await fetchDetails();
-    } catch (error: any) {
-      console.error(error);
-      const errorData = error.response?.data;
-      setStatus({ isOpen: true, type: "error", title: "Revoke Failed", message: errorData?.detail || "Something went wrong. Please try again." });
+    } catch (error: unknown) {
+      const err = error as ApiError;
+      const errorMessage =
+        err.response?.data?.detail ||
+        err.response?.data?.message ||
+        err.message ||
+        "Something went wrong. Please try again.";
+
+      setStatus({
+        isOpen: true,
+        type: "error",
+        title: "Revoke Failed",
+        message: errorMessage,
+      });
     } finally {
       setRevokingCode(null);
     }
@@ -86,7 +110,10 @@ export default function RevokeModal({
   };
 
   const updateRevokeQty = (ticketCode: string, qty: number, max: number) => {
-    setRevokeQuantities({ ...revokeQuantities, [ticketCode]: Math.max(1, Math.min(qty, max)) });
+    setRevokeQuantities({
+      ...revokeQuantities,
+      [ticketCode]: Math.max(1, Math.min(qty, max)),
+    });
   };
 
   return (
@@ -107,14 +134,20 @@ export default function RevokeModal({
           body: { padding: "12px", maxHeight: "70vh", overflowY: "auto" },
         }}
         closeIcon={
-          <span className="bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] font-bold">✕</span>
+          <span className="bg-error text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] font-bold">
+            ✕
+          </span>
         }
       >
         <div className="space-y-6">
           {loading ? (
-            <p className="text-center py-10 font-bold text-dark-3 animate-pulse">Fetching tickets...</p>
+            <p className="text-center py-10 font-bold text-dark-3 animate-pulse">
+              Fetching tickets...
+            </p>
           ) : details.length === 0 ? (
-            <p className="text-center py-10 text-dark-3 font-bold">No tickets left to revoke.</p>
+            <p className="text-center py-10 text-dark-3 font-bold">
+              No tickets left to revoke.
+            </p>
           ) : (
             details.map((category) => (
               <div key={category.categoryName}>
@@ -153,36 +186,52 @@ export default function RevokeModal({
                         </div>
                         <p className="font-bold text-dark-1 mt-1 text-xs sm:text-sm">
                           Quantity:
-                          <span className="text-dark-1 px-2 py-0.5 rounded ml-1">{ticket.quantity}</span>
+                          <span className="text-dark-1 px-2 py-0.5 rounded ml-1">
+                            {ticket.quantity}
+                          </span>
                         </p>
                       </div>
 
                       {/* Revoke button */}
                       <div className="w-full sm:w-32 flex flex-row sm:flex-col items-center justify-between sm:justify-center p-3 sm:pr-4 gap-4 sm:gap-2 bg-dark-1/5 sm:bg-transparent shrink-0 border-t-2 sm:border-t-0 border-dashed border-dark-1/20">
                         <div className="flex flex-col flex-1 sm:w-full">
-                          <label className="text-[10px] font-bold text-dark-1 uppercase mb-1">Qty</label>
+                          <label className="text-[10px] font-bold text-dark-1 uppercase mb-1">
+                            Qty
+                          </label>
                           <input
                             type="number"
                             min={1}
                             max={ticket.quantity}
                             value={revokeQuantities[ticket.ticketCode] || 1}
                             onChange={(e) =>
-                              updateRevokeQty(ticket.ticketCode, parseInt(e.target.value) || 1, ticket.quantity)
+                              updateRevokeQty(
+                                ticket.ticketCode,
+                                parseInt(e.target.value) || 1,
+                                ticket.quantity,
+                              )
                             }
                             className="w-full px-2 py-1 bg-white/50 border border-dark-1/20 rounded font-bold text-sm outline-none focus:border-primary"
                           />
                         </div>
                         <button
-                          onClick={() => handleRevoke(ticket.ticketCode, ticket.quantity)}
+                          onClick={() =>
+                            handleRevoke(ticket.ticketCode, ticket.quantity)
+                          }
                           disabled={revokingCode !== null}
                           className="flex-1 sm:w-full flex justify-center items-center gap-1 bg-error text-white py-2 sm:py-1.5 rounded-lg hover:bg-error/80 transition-all cursor-pointer active:scale-95 disabled:opacity-50 h-9.5 sm:h-auto"
                         >
                           <ArrowCounterClockwiseIcon
                             size={16}
                             weight="bold"
-                            className={revokingCode === ticket.ticketCode ? "animate-spin" : ""}
+                            className={
+                              revokingCode === ticket.ticketCode
+                                ? "animate-spin"
+                                : ""
+                            }
                           />
-                          <span className="text-[10px] font-bold uppercase">Revoke</span>
+                          <span className="text-[10px] font-bold uppercase">
+                            Revoke
+                          </span>
                         </button>
                       </div>
                     </li>
