@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { CreateModalProps, Category } from "@/types/api";
 import { TicketModal } from "../TicketModal";
 import { StatusModal } from "../StatusModal";
+import { api } from "@/lib/api";
 import { ConfigProvider, DatePicker } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -28,8 +29,8 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch("http://localhost:5224/api/v1/get-categories");
-      const data = await res.json();
+      const res = await api.get("/v1/get-categories");
+      const data = res.data;
       if (Array.isArray(data)) {
         setCategories(data);
       }
@@ -47,17 +48,12 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
       return;
     }
     try {
-      const res = await fetch("http://localhost:5224/api/v1/insert-category", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newCategoryName }),
-      });
-      if (res.ok) {
-        await fetchCategories();
-        setCategoryName(newCategoryName);
-        setIsAddingCategory(false);
-        setNewCategoryName("");
-      }
+      await api.post("/v1/insert-category", { name: newCategoryName });
+      
+      await fetchCategories();
+      setCategoryName(newCategoryName);
+      setIsAddingCategory(false);
+      setNewCategoryName("");
     } catch (e) {
       console.error("Failed to add category", e);
     }
@@ -95,39 +91,26 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
     };
 
     try {
-      const res = await fetch("http://localhost:5224/api/v1/insert-tickets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      await api.post("/v1/insert-tickets", payload);
 
-      if (res.ok) {
-        onCreated({
-          ticketId: 0,
-          ticketCode,
-          ticketName,
-          categoryName,
-          eventDate: eventDate.format("YYYY-MM-DD HH:mm:ss"),
-          price: Number(price),
-          quota: Number(quota),
-        });
-        onClose();
-      } else {
-        const errData = await res.json();
-        setStatus({
-          isOpen: true,
-          type: "error",
-          title: "Creation Failed",
-          message: errData.detail || "Failed to create ticket.",
-        });
-      }
-    } catch (e) {
-      console.error(e);
+      onCreated({
+        ticketId: 0,
+        ticketCode,
+        ticketName,
+        categoryName,
+        eventDate: eventDate.format("YYYY-MM-DD HH:mm:ss"),
+        price: Number(price),
+        quota: Number(quota),
+      });
+      onClose();
+    } catch (error: any) {
+      console.error(error);
+      const errData = error.response?.data;
       setStatus({
         isOpen: true,
         type: "error",
-        title: "Error",
-        message: "An unexpected error occurred.",
+        title: "Creation Failed",
+        message: errData?.detail || "Failed to create ticket. Please check if you are logged in.",
       });
     }
   };
@@ -140,7 +123,7 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
   return (
     <>
       <TicketModal onClose={onClose}>
-        <div className="flex items-center justify-center p-4 sm:p-6 shrink-0 w-full sm:w-[150px]">
+        <div className="flex items-center justify-center p-4 sm:p-6 shrink-0 w-full sm:w-37.5">
           <span className="font-mono font-bold text-dark-1 text-center">New Ticket</span>
         </div>
 

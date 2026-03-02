@@ -8,6 +8,9 @@ import { CreateModal } from "@/components/Create/CreateModal";
 import { StatusModal } from "@/components/StatusModal";
 import { CreateTicketCard } from "@/components/Create/CreateTicketCard";
 import { DeleteConfirmModal } from "@/components/Create/DeleteConfirmModal";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 
 export default function ManageTicketsPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -30,13 +33,16 @@ export default function ManageTicketsPage() {
     message: string;
   }>({ isOpen: false, type: "success", title: "", message: "" });
 
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
   const fetchTickets = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:5224/api/v1/get-available-ticket?pageNumber=${page}`,
+      const response = await api.get(
+        `/v1/get-my-tickets?pageNumber=${page}`
       );
-      const data: TicketListResponse = await response.json();
+      const data: TicketListResponse = response.data;
 
       setTickets(data.tickets || []);
       if (data.pages) {
@@ -51,8 +57,12 @@ export default function ManageTicketsPage() {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+        router.push("/ticket/create");
+        return;
+    }
     fetchTickets();
-  }, [page]);
+  }, [page, isAuthenticated, router]);
 
   const handleCloseStatus = () =>
     setStatus((prev) => ({ ...prev, isOpen: false }));
@@ -70,38 +80,27 @@ export default function ManageTicketsPage() {
     setDeleteConfirm({ isOpen: false, ticketCode: null });
 
     try {
-      const response = await fetch(
-        `http://localhost:5224/api/v1/delete-ticket/${ticketCode}`,
-        {
-          method: "DELETE",
-        },
-      );
-      if (response.ok) {
-        setStatus({
-          isOpen: true,
-          type: "success",
-          title: "Ticket Deleted",
-          message: `Ticket ${ticketCode} has been deleted successfully.`,
-        });
-        fetchTickets();
-      } else {
-        const data = await response.json();
-        setStatus({
-          isOpen: true,
-          type: "error",
-          title: "Delete Failed",
-          message: data.detail || "Failed to delete ticket.",
-        });
-      }
-    } catch (error) {
+      await api.delete(`/v1/delete-ticket/${ticketCode}`);
+      
+      setStatus({
+        isOpen: true,
+        type: "success",
+        title: "Ticket Deleted",
+        message: `Ticket ${ticketCode} has been deleted successfully.`,
+      });
+      fetchTickets();
+      
+    } catch (error: any) {
       setStatus({
         isOpen: true,
         type: "error",
-        title: "Error",
-        message: "An error occurred while deleting the ticket.",
+        title: "Delete Failed",
+        message: error.response?.data?.detail || "Failed to delete ticket.",
       });
     }
   };
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className="p-6 flex flex-col h-full bg-white">

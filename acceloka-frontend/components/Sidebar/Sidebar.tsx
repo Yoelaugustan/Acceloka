@@ -10,13 +10,18 @@ import {
   ClipboardTextIcon,
   SidebarSimpleIcon,
   XIcon,
+  SignInIcon,
+  SignOutIcon,
+  UserIcon
 } from "@phosphor-icons/react";
 import { useSidebar } from "@/context/SidebarContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Sidebar() {
   const [isTicketsOpen, setIsTicketsOpen] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { isMobileOpen, setIsMobileOpen } = useSidebar();
+  const { isAuthenticated, logout, user } = useAuth();
   const pathname = usePathname();
 
   const isPageActive = (path: string) =>
@@ -117,52 +122,102 @@ export default function Sidebar() {
               >
                 View Tickets
               </Link>
-              <Link
-                href="/tickets/create"
-                onClick={() => setIsMobileOpen(false)}
-                className={`m-2 p-2 px-6 rounded-full transition-all ${
-                  isExactActive("/tickets/create")
-                    ? "bg-white text-primary font-bold shadow-sm"
-                    : "text-primary hover:bg-white/50"
-                }`}
-              >
-                Create Tickets
-              </Link>
+              
+              {isAuthenticated && (
+                <Link
+                  href="/tickets/create"
+                  onClick={() => setIsMobileOpen(false)}
+                  className={`m-2 p-2 px-6 rounded-full transition-all ${
+                    isExactActive("/tickets/create")
+                      ? "bg-white text-primary font-bold shadow-sm"
+                      : "text-primary hover:bg-white/50"
+                  }`}
+                >
+                  Create Ticket
+                </Link>
+              )}
             </div>
           </div>
 
           {/* Booking Menu Item */}
-          <div className="relative">
-            {isPageActive("/bookings") && (
-              <div className="absolute left-0 top-0 w-1.5 h-12 bg-primary rounded-r-full z-10" />
-            )}
-            <Link
-              href="/bookings"
-              onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center text-primary transition-all h-12 ${
-                collapsed ? "justify-center" : "gap-3 px-7"
-              } ${isPageActive("/bookings") ? "font-bold" : ""}`}
-            >
-              <ClipboardTextIcon size={32} weight="fill" />
-              {!collapsed && <span className="text-lg">Booking</span>}
-            </Link>
-          </div>
+          {isAuthenticated && (
+            <div className="relative">
+              {isPageActive("/bookings") && (
+                <div className="absolute left-0 top-0 w-1.5 h-12 bg-primary rounded-r-full z-10" />
+              )}
+              <Link
+                href="/bookings"
+                onClick={() => setIsMobileOpen(false)}
+                className={`flex items-center text-primary transition-all h-12 ${
+                  collapsed ? "justify-center" : "gap-3 px-7"
+                } ${isPageActive("/bookings") ? "font-bold" : ""}`}
+              >
+                <ClipboardTextIcon size={32} weight="fill" />
+                {!collapsed && <span className="text-lg">Bookings</span>}
+              </Link>
+            </div>
+          )}
         </nav>
 
-        {/* Sidebar Collapse Button */}
+        {/* User display when expanded */}
+        {!collapsed && isAuthenticated && (
+          <div className="p-4 pb-0">
+             <div className="flex items-center gap-3 px-3">
+                <UserIcon size={32} weight="fill" className="text-primary" />
+                <span className="text-lg font-bold text-primary truncate">
+                  {user?.username || "User"}
+                </span>
+              </div>
+          </div>
+        )}
+
         <div
-          className={`hidden md:flex p-4 ${collapsed ? "justify-center" : "justify-end"}`}
+          className={`flex items-center p-4 gap-2 mt-4 ${
+            collapsed ? "flex-col justify-center" : "justify-between"
+          }`}
         >
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2 hover:bg-black/5 rounded-lg"
-          >
-            <SidebarSimpleIcon
-              size={32}
-              weight="fill"
-              className="text-primary"
-            />
-          </button>
+          {/* Auth Button */}
+          {isAuthenticated ? (
+            <button
+              onClick={() => {
+                logout();
+                if (isMobile) setIsMobileOpen(false);
+              }}
+              className={`flex items-center text-red-500 hover:bg-red-50 rounded-lg transition-all cursor-pointer h-12 ${
+                collapsed ? "justify-center w-12" : "gap-3 px-3"
+              }`}
+              title="Logout"  
+            >
+              <SignOutIcon size={32} weight="bold" />
+            </button>
+          ) : (
+            <Link
+              href="/auth/login"
+              onClick={() => isMobile && setIsMobileOpen(false)}
+              className={`flex items-center text-primary hover:bg-black/5 rounded-lg transition-all h-12 ${
+                collapsed ? "justify-center w-12" : "gap-3 px-3 flex-1"
+              }`}
+              title="Login"
+            >
+              <SignInIcon size={32} weight="bold" />
+              {!collapsed && <span className="text-lg font-bold">Login</span>}
+            </Link>
+          )}
+
+          {/* Sidebar Collapse Button */}
+          {!isMobile && (
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 hover:bg-black/5 rounded-lg shrink-0"
+              title={collapsed ? "Expand" : "Collapse"}
+            >
+              <SidebarSimpleIcon
+                size={32}
+                weight="fill"
+                className="text-primary"
+              />
+            </button>
+          )}
         </div>
       </div>
     );
