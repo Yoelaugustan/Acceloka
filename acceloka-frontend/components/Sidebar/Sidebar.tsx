@@ -159,7 +159,7 @@ export default function Sidebar() {
           )}
         </nav>
 
-        {/* User display when expanded */}
+        {/* User display */}
         {!collapsed && isAuthenticated && (
           <div className="p-4 pb-0">
             <div className="flex items-center gap-3 px-3">

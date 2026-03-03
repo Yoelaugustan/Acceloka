@@ -83,7 +83,6 @@ function ViewTicketsPage() {
   useEffect(() => {
     const fetchTickets = async () => {
       setLoading(true);
-      console.log(filters);
       try {
         // insert the filter to the query params
         const queryParams = new URLSearchParams();
@@ -248,7 +247,6 @@ function ViewTicketsPage() {
       {/* ticket items */}
       <div className="flex-1 overflow-y-auto p-6 pt-2">
         {loading ? (
-          // show loading when fetching
           <div>
             <p className="text-center mt-10">Loading...</p>
           </div>

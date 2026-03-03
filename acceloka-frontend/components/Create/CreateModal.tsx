@@ -131,7 +131,7 @@ export function CreateModal({ onClose, onCreated }: CreateModalProps) {
           </span>
         </div>
 
-        {/* tear line */}
+        {/* Ticket UI */}
         <div className="block sm:hidden w-full border-t-2 border-dashed border-dark-4/50" />
         <div className="hidden sm:flex flex-col items-center justify-center py-4 self-stretch">
           <div className="flex-1 border-l-2 border-dashed border-dark-4/50" />
