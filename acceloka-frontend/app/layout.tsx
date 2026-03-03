@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${instrument.variable} ${spline.variable} ${dmMono.variable} flex h-screen bg-white`}
       >
